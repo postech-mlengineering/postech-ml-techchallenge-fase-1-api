@@ -1,5 +1,5 @@
 from api.models.__init__ import db
-from sqlalchemy import distinct, or_
+from sqlalchemy import distinct, or_, case, func
 import logging
 
 
@@ -113,6 +113,117 @@ def get_books_by_title_or_category(title=None, genre=None):
                 'genre': book.genre,
                 'price': book.price
             })
+        return results
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return None
+
+
+def get_books_by_price_range(min_price, max_price):
+    '''
+    Filtra livros dentro de uma faixa de preço específica.
+    '''
+    try:
+        books = (
+            db.session.query(Books)
+            .filter(Books.price >= min_price, Books.price <= max_price)
+            .order_by(Books.price.asc())
+            .all()
+        )
+        results = []
+        for book in books:
+            results.append({
+                'upc': book.upc,
+                'title': book.title,
+                'genre': book.genre,
+                'price': book.price
+            })
+        return results
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return None
+
+
+def get_top_rated_books(limit=10):
+    '''
+    Retorna os livros com a melhor avaliação (rating mais alto).
+    '''
+    rating_map = {
+        'One': 1, 
+        'Two': 2, 
+        'Three': 3, 
+        'Four': 4, 
+        'Five': 5
+    }
+    try:
+        rating_case = case(rating_map, value=Books.rating).label('rating_value')
+        top_books = (
+            db.session.query(Books, rating_case)
+            .order_by(rating_case.desc(), Books.title.asc())
+            .limit(limit)
+            .all()
+        )
+        results = []
+        for book, rating_val in top_books:
+            results.append({
+                'upc': book.upc,
+                'title': book.title,
+                'genre': book.genre,
+                'rating': book.rating,
+                'price': book.price
+            })
+        return results
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return None
+    
+
+def get_stats_overview():
+    '''
+    Calcula o total de livros, preço médio e distribuição de ratings.
+    '''
+    try:
+        total_books = db.session.query(Books).count()
+        avg_price = db.session.query(func.avg(Books.price)).scalar()
+        rating_distribution = (
+            db.session.query(Books.rating, func.count(Books.rating))
+            .group_by(Books.rating)
+            .order_by(func.count(Books.rating).desc())
+            .all()
+        )
+        return {
+            'total_livros': total_books,
+            'preco_medio': round(avg_price, 2) if avg_price else 0.0,
+            'distribuicao_ratings': [{'rating': r[0], 'count': r[1]} for r in rating_distribution]
+        }
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return None
+    
+
+def get_stats_by_category():
+    '''
+    Calcula a quantidade e o preço médio por categoria.
+    '''
+    try:
+        category_stats = (
+            db.session.query(
+                Books.genre,
+                func.count(Books.genre).label('count'),
+                func.avg(Books.price).label('avg_price')
+            )
+            .group_by(Books.genre)
+            .order_by(func.count(Books.genre).desc())
+            .all()
+        )
+        results = [
+            {
+                'categoria': stat.genre,
+                'quantidade': stat.count,
+                'preco_medio': round(stat.avg_price, 2)
+            }
+            for stat in category_stats
+        ]
         return results
     except Exception as e:
         logger.error(f'error: {e}')

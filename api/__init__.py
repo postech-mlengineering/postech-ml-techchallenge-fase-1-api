@@ -10,6 +10,7 @@ from api.routes.auth import auth_bp
 from api.routes.health import health_bp
 from api.routes.categories import categories_bp
 from api.routes.books import books_bp
+from api.routes.stats import stats_bp
 
 from api.models.__init__ import db
 
@@ -51,6 +52,7 @@ def create_app():
     app.register_blueprint(health_bp, url_prefix='/api/v1')
     app.register_blueprint(categories_bp, url_prefix='/api/v1')
     app.register_blueprint(books_bp, url_prefix='/api/v1/books')
+    app.register_blueprint(stats_bp, url_prefix='/api/v1/stats')
 
     #rota raiz
     @app.route('/')

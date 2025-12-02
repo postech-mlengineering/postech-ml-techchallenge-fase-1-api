@@ -1,6 +1,11 @@
 import logging
 from flask import Blueprint, jsonify, request
-from api.models.books import get_all_books, get_book_by_upc, get_books_by_title_or_category
+from api.models.books import (
+    get_all_books, get_book_by_upc, 
+    get_books_by_title_or_category,
+    get_books_by_price_range,
+    get_top_rated_books
+)
 from flask_jwt_extended import jwt_required
 
 
@@ -213,6 +218,72 @@ def books_title_category():
         if books:
             return jsonify(books), 200
         return jsonify({'msg': 'Nenhum livro encontrado com os critérios fornecidos.'}), 404
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return jsonify({'error': e}), 500
+    
+
+@books_bp.route('/price-range', methods=['GET'])
+@jwt_required()
+def price_range_books():
+    '''
+    Filtra livros dentro de uma faixa de preço específica.
+    ---
+    tags:
+      - Livros
+    parameters:
+      - in: query
+        name: min
+        type: number
+        required: true
+        description: Preço mínimo (inclusivo).
+      - in: query
+        name: max
+        type: number
+        required: true
+        description: Preço máximo (inclusivo).
+    responses:
+      200:
+        description: Lista de livros dentro da faixa de preço.
+    '''
+    try:
+        min_price = request.args.get('min', type=float)
+        max_price = request.args.get('max', type=float)
+        if min_price is None or max_price is None:
+            return jsonify({'msg': 'Os parâmetros "min" e "max" são obrigatórios.'}), 400
+        books = get_books_by_price_range(min_price=min_price, max_price=max_price)
+        if books:
+            return jsonify(books), 200
+        return jsonify({'msg': 'Nenhum livro encontrado na faixa de preço.'}), 404
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return jsonify({'error': e}), 500
+    
+
+@books_bp.route('/top-rated', methods=['GET'])
+@jwt_required()
+def top_rated_books():
+    '''
+    Lista os livros com a melhor avaliação (rating mais alto).
+    ---
+    tags:
+      - Livros
+    parameters:
+      - in: query
+        name: limit
+        type: integer
+        required: false
+        description: Número máximo de livros a retornar (Padrão: 10).
+    responses:
+      200:
+        description: Lista dos livros mais bem avaliados.
+    '''
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+        books = get_top_rated_books(limit=limit)
+        if books:
+            return jsonify(books), 200
+        return jsonify({'msg': 'Nenhum livro encontrado'}), 404
     except Exception as e:
         logger.error(f'error: {e}')
         return jsonify({'error': e}), 500
