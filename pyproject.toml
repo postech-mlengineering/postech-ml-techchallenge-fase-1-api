@@ -1,0 +1,39 @@
+[project]
+name = "postech-ml-techchallenge-fase-1"
+version = "0.1.0"
+description = "API para o Tech Challenge da Fase 1 da Pós-Graduação em Machine Learning Engineering da FIAP."
+authors = [
+    {name = "jorgeplatero",email = "jorge.platero@outlook.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11, <3.14"
+dependencies = [
+    "beautifulsoup4 (>=4.14.2,<5.0.0)",
+    "pandas (>=2.3.3,<3.0.0)",
+    "requests (>=2.32.5,<3.0.0)",
+    "flask (>=3.1.2,<4.0.0)",
+    "flasgger (>=0.9.7.1,<0.10.0.0)",
+    "scikit-learn (>=1.7.2,<2.0.0)",
+    "joblib (>=1.5.2,<2.0.0)",
+    "numpy (>=2.3.5,<3.0.0)",
+    "flask-sqlalchemy (>=3.1.1,<4.0.0)",
+    "flask-jwt-extended (>=4.7.1,<5.0.0)",
+    "psycopg2-binary (>=2.9.11,<3.0.0)",
+    "flask-bcrypt (>=1.0.1,<2.0.0)",
+    "alembic (>=1.17.2,<2.0.0)"
+]
+
+
+[tool.poetry]
+package-mode = false
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "sqlalchemy2-stubs (>=0.0.2a38,<0.0.3)"
+]
