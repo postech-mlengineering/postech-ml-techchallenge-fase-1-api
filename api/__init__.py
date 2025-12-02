@@ -47,7 +47,7 @@ def create_app():
         return jsonify({'error': 'Token expirado'}), 401
 
     #registro de blueprints
-    app.register_blueprint(auth_bp, url_prefix='/api/v1')
+    app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     app.register_blueprint(health_bp, url_prefix='/api/v1')
     app.register_blueprint(categories_bp, url_prefix='/api/v1')
     app.register_blueprint(books_bp, url_prefix='/api/v1/books')
