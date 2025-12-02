@@ -1,7 +1,9 @@
-import datetime
 from api.models.__init__ import db
-from sqlalchemy import distinct
+from sqlalchemy import distinct, or_
+import logging
 
+
+logger = logging.getLogger('api.models.books')
 
 class Books(db.Model):
     '''Modelo de dados para a tabela de Books.'''
@@ -28,12 +30,13 @@ def get_all_categories():
         categories = (
             db.session.query(distinct(Books.genre)).order_by(Books.genre.asc()).all()
         )
-        results = [{'categories': c[0]} for c in categories]
+        results = [{'category': c[0]} for c in categories]
         return results
     except Exception as e:
-        print(f'Erro ao buscar categrias: {e}')
+        logger.error(f'error: {e}')
         return None
     
+
 def get_all_books():
     try:
         books = (
@@ -43,4 +46,74 @@ def get_all_books():
         return results
     except Exception as e:
         print(f'Erro ao buscar livros: {e}')
+        return None
+    
+
+def check_db_connection():
+    '''
+    Executa uma consulta simples para verificar a conexão com o banco de dados.
+    '''
+    try:
+        db.session.query(Books).limit(1).all()
+        return True
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return False
+    
+
+def get_book_by_upc(upc):
+    '''
+    Retorna todos os detalhes de um livro com base no seu UPC.
+    '''
+    try:
+        book = db.session.query(Books).filter_by(upc=upc).first()
+        if book:
+            result = {
+                'upc': book.upc,
+                'title': book.title,
+                'genre': book.genre,
+                'price': book.price,
+                'availability': book.availability,
+                'rating': book.rating,
+                'description': book.description,
+                'product_type': book.product_type,
+                'price_excl_tax': book.price_excl_tax,
+                'price_incl_tax': book.price_incl_tax,
+                'tax': book.tax,
+                'number_of_reviews': book.number_of_reviews,
+                'url': book.url
+            }
+            return result
+        return None
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return None
+    
+
+def get_books_by_title_or_category(title=None, genre=None):
+    '''
+    Busca livros por título OU categoria.
+    '''
+    try:
+        filters = []
+        if title:
+            filters.append(Books.title.ilike(f'%{title}%'))
+        if genre:
+            filters.append(Books.genre.ilike(f'%{genre}%'))
+        if filters:
+            query = db.session.query(Books).filter(or_(*filters))
+        else:
+            return [] 
+        books = query.order_by(Books.title.asc()).all()
+        results = []
+        for book in books:
+            results.append({
+                'upc': book.upc,
+                'title': book.title,
+                'genre': book.genre,
+                'price': book.price
+            })
+        return results
+    except Exception as e:
+        logger.error(f'error: {e}')
         return None

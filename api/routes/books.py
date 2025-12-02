@@ -1,15 +1,14 @@
 import logging
-from flask import Blueprint, jsonify
-from flask_bcrypt import Bcrypt
-from api.models.books import get_all_books
+from flask import Blueprint, jsonify, request
+from api.models.books import get_all_books, get_book_by_upc, get_books_by_title_or_category
 from flask_jwt_extended import jwt_required
 
 
-bcrypt = Bcrypt()
-logger = logging.getLogger('api.auth')
-
+logger = logging.getLogger('api.routes.books')
 books_bp = Blueprint('books', __name__)
-@books_bp.route('/books', methods=['GET'])
+
+
+@books_bp.route('/', methods=['GET'])
 @jwt_required()
 def books():
     '''
@@ -49,4 +48,171 @@ def books():
             return jsonify(books), 200
         return jsonify({'msg': 'Sem livros cadastrados'}), 200
     except Exception as e:
+        logger.error(f'error: {e}')
         return jsonify({'error': e}), 401
+
+
+@books_bp.route('/<string:upc>', methods=['GET'])
+@jwt_required()
+def book_detail(upc):
+    '''
+    Retorna todos os detalhes de um livro a partir do seu UPC (Universal Product Code).
+
+    Esta rota consulta o banco de dados usando o UPC fornecido na URL e retorna um objeto JSON
+    com todas as informações do livro.
+    ---
+    tags:
+      - Livros
+    parameters:
+      - in: path
+        name: upc
+        type: string
+        required: true
+        description: O UPC (código de produto universal), que é a chave primária do livro.
+    responses:
+      200:
+        description: Detalhes completos do livro.
+        schema:
+          type: object
+          properties:
+            upc:
+              type: string
+              description: Código de Produto Universal (chave primária).
+            title:
+              type: string
+              description: Título principal do livro.
+            genre:
+              type: string
+              description: Gênero ou categoria do livro.
+            price:
+              type: number
+              format: float
+              description: Preço do livro.
+            availability:
+              type: integer
+              description: Número de cópias disponíveis em estoque.
+            rating:
+              type: string
+              description: Avaliação do livro (e.g., One star, Two stars).
+            description:
+              type: string
+              description: Descrição completa do livro.
+            product_type:
+              type: string
+              description: Tipo de produto (e.g., books).
+            price_excl_tax:
+              type: number
+              format: float
+              description: Preço sem impostos.
+            price_incl_tax:
+              type: number
+              format: float
+              description: Preço com impostos incluídos.
+            tax:
+              type: number
+              format: float
+              description: Valor do imposto aplicado.
+            number_of_reviews:
+              type: integer
+              description: Contagem total de avaliações.
+            url:
+              type: string
+              description: URL relativa da página do produto.
+        examples:
+          application/json: 
+            upc: "a228380e22709289"
+            title: "The White Queen"
+            genre: "Historical"
+            price: 5.99
+            availability: 5
+            rating: "Five stars"
+            description: "A description..."
+            product_type: "books"
+            price_excl_tax: 5.99
+            price_incl_tax: 5.99
+            tax: 0.00
+            number_of_reviews: 1
+            url: "catalogue/the-white-queen_1/index.html"
+      401:
+        description: Não autorizado (Requer autenticação JWT).
+      404:
+        description: Livro não encontrado.
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+              description: Mensagem de que o livro não existe.
+      500:
+        description: Erro interno do servidor.
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Mensagem genérica de erro interno.
+    '''
+    try:
+        book_details = get_book_by_upc(upc)
+        if book_details:
+            return jsonify(book_details), 200
+        return jsonify({'msg': f'Livro com UPC {upc} não encontrado'}), 404
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return jsonify({'error': e}), 401
+    
+
+@books_bp.route('/search', methods=['GET'])
+@jwt_required()
+def books_title_category():
+    '''
+    Busca livros por título e-ou categoria usando query parameters.
+    ---
+    tags:
+      - Livros
+    parameters:
+      - in: query
+        name: title
+        type: string
+        required: false
+        description: Título parcial para busca.
+      - in: query
+        name: genre
+        type: string
+        required: false
+        description: Categoria/gênero parcial para busca.
+    responses:
+      200:
+        description: Lista de livros que correspondem aos critérios de busca.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              upc: {type: string}
+              title: {type: string}
+              genre: {type: string}
+              price: {type: number}
+        examples:
+          application/json: 
+            - upc: "123"
+              title: "Livro A"
+              genre: "Fantasia"
+              price: 10.00
+      404:
+        description: Nenhum livro encontrado com os filtros aplicados.
+      500:
+        description: Erro interno do servidor.
+    '''
+    try:
+        title = request.args.get('title')
+        genre = request.args.get('genre')
+        if not title and not genre:
+            return jsonify({'msg': 'Forneça um parâmetro "title" e/ou "genre" para a busca.'}), 400
+        books = get_books_by_title_or_category(title=title, genre=genre)
+        if books:
+            return jsonify(books), 200
+        return jsonify({'msg': 'Nenhum livro encontrado com os critérios fornecidos.'}), 404
+    except Exception as e:
+        logger.error(f'error: {e}')
+        return jsonify({'error': e}), 500

@@ -2,7 +2,6 @@ import datetime
 from api.models.__init__ import db
 
 
-
 class UserAccess(db.Model):
     __tablename__ = "user_acess"
     id              = db.Column(db.Integer, primary_key=True, autoincrement=True)

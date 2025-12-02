@@ -5,19 +5,16 @@ from flasgger import Swagger
 from sqlalchemy import inspect
 from flask_bcrypt import Bcrypt
 
-#CONFIG and AUTH
 from api.config.config import Config
 from api.routes.auth import auth_bp
 from api.routes.health import health_bp
 from api.routes.categories import categories_bp
 from api.routes.books import books_bp
-#MODELS
-#Imports só para Inicializar o banco
+
 from api.models.__init__ import db
 
 
 bcrypt = Bcrypt()
-#auth_bp = Blueprint('auth', __name__)
 logger = logging.getLogger('api.auth')
 
 def create_app():
@@ -50,10 +47,10 @@ def create_app():
         return jsonify({'error': 'Token expirado'}), 401
 
     #registro de blueprints
-    app.register_blueprint(auth_bp, url_prefix='/v1')
-    app.register_blueprint(health_bp, url_prefix='/v1')
-    app.register_blueprint(categories_bp, url_prefix='/v1')
-    app.register_blueprint(books_bp, url_prefix='/v1')
+    app.register_blueprint(auth_bp, url_prefix='/api/v1')
+    app.register_blueprint(health_bp, url_prefix='/api/v1')
+    app.register_blueprint(categories_bp, url_prefix='/api/v1')
+    app.register_blueprint(books_bp, url_prefix='/api/v1/books')
 
     #rota raiz
     @app.route('/')

@@ -5,9 +5,8 @@ from api.models.books import get_all_categories
 from flask_jwt_extended import jwt_required
 
 
-bcrypt = Bcrypt()
+logger = logging.getLogger('api.routes.categories')
 categories_bp = Blueprint('categories', __name__)
-logger = logging.getLogger('api.auth')
 
 
 @categories_bp.route('/categories', methods=['GET'])
@@ -55,4 +54,5 @@ def categories():
             return jsonify(categorias), 200
         return jsonify({'msg': 'Sem categorias cadastradas'}), 200
     except Exception as e:
+        logger.error(f'error: {e}')
         return jsonify({'error': e}), 401
