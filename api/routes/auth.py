@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from flask_bcrypt import Bcrypt
 from api.models.user import db, User, get_user_by_username
+from api.models.users_access import UserAccess
 
 
 bcrypt = Bcrypt()
@@ -83,5 +84,10 @@ def login():
     
     if user and bcrypt.check_password_hash(user.password, data['password']):
         access_token = create_access_token(identity=str(user.id))
+        
+        new_access = UserAccess(username=data['username'], token=access_token)
+        db.session.add(new_access)
+        db.session.commit()
+
         return jsonify({'access_token': access_token}), 200
     return jsonify({'error': 'Credenciais inválidas'}), 401
