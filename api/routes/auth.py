@@ -6,6 +6,7 @@ from flask_jwt_extended import (
 from flask_bcrypt import Bcrypt
 from api.models.user import db, User, get_user_by_username
 from api.models.users_access import UserAccess
+from api.models.refresh_token_manager import RefreshTokenManager
 from datetime import datetime, timedelta
 
 
@@ -123,17 +124,25 @@ def login():
     
     
     if user and bcrypt.check_password_hash(user.password, data['password']):
+
+      new_login = UserAccess(
+            username=data['username'],
+            created_at = datetime.utcnow()
+        )
         
-        existing_refresh_token = (UserAccess.query
+      db.session.add(new_login)
+      db.session.commit()
+        
+      existing_refresh_token = (RefreshTokenManager.query
                               .filter(
-                                  UserAccess.username == user.username,
-                                  UserAccess.refresh_token_expire_at > datetime.utcnow()
+                                  RefreshTokenManager.username == user.username,
+                                  RefreshTokenManager.refresh_token_expire_at > datetime.utcnow()
                                   )
-                                  .order_by(UserAccess.created_at.desc())
+                                  .order_by(RefreshTokenManager.created_at.desc())
                                   .first()
                                   )
         
-        if existing_refresh_token:
+      if existing_refresh_token:
             # Usar o token que ainda está em vigor
             access_token    = create_access_token(identity=str(user.id))
 
@@ -141,19 +150,19 @@ def login():
                 "acess_token": access_token,
                 "refresh_token": existing_refresh_token.refresh_token}), 200
 
-        access_token    = create_access_token(identity=str(user.id))
-        refresh_token   = create_refresh_token(identity=str(user.id))
+      access_token    = create_access_token(identity=str(user.id))
+      refresh_token   = create_refresh_token(identity=str(user.id))
 
-        new_access = UserAccess(username=data['username']
+      new_refresh_token_to_db = RefreshTokenManager(username=data['username']
                                 , refresh_token = refresh_token
                                 , refresh_token_expire_at = datetime.utcnow() + timedelta(days=1) #Verificar com o Config
 
                                 )
         
-        db.session.add(new_access)
-        db.session.commit()
+      db.session.add(new_refresh_token_to_db)
+      db.session.commit()
 
-        return jsonify({
+      return jsonify({
             'access_token': access_token,
             'refresh_token': refresh_token}), 200
     
@@ -201,7 +210,7 @@ def refresh():
         
         identity = get_jwt_identity()
         
-        user_access = UserAccess.query.filter_by(
+        user_access = RefreshTokenManager.query.filter_by(
             refresh_token=request.headers.get("Authorization").replace("Bearer ", "")
         ).first()
 
