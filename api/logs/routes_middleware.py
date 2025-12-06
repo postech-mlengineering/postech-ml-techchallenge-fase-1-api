@@ -47,7 +47,8 @@ def register_route_logger(app):
             '/favicon.ico',
             '/static',
             '/api/v1/auth/login',
-            '/api/v1/auth/refresh'
+            '/api/v1/auth/refresh',
+            '/api/v1/auth/register'
         ]
 
         if any(request.path.startswith(r) for r in ignored_routes):
