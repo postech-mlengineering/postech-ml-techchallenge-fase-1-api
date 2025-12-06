@@ -15,4 +15,4 @@ class Config(object):
     }
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=1)   # expiração do access token
-    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)     # expiração do refresh token
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=10)     # expiração do refresh token

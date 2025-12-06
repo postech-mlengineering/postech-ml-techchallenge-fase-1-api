@@ -9,6 +9,8 @@ from api.models.users_access import UserAccess
 from api.models.refresh_token_manager import RefreshTokenManager
 from datetime import datetime, timedelta
 
+from api.config.config import Config
+
 
 
 
@@ -60,60 +62,55 @@ def register_user():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     '''
-    Realiza login do usuário e gera tokens JWT.
+    Realiza a autenticação do usuário e gera tokens JWT.
 
     ---
-    tags:
-      - Autenticação
-    summary: Realiza login e retorna tokens JWT
-    description: >
-        Endpoint responsável por autenticar um usuário a partir de **username** e **password**.  
-        Caso as credenciais estejam corretas, o endpoint retorna:
-        - Um **access token** válido por curto período  
-        - Um **refresh token** válido por 1 dia  
-        
-        Se já existir um refresh token ainda válido no banco, ele será reutilizado, evitando gerar múltiplos tokens simultâneos para o mesmo usuário.
-    consumes:
-      - application/json
-    produces:
-      - application/json
+    summary: Autenticação de usuário e geração de tokens
+    description: |
+        Endpoint responsável por autenticar um usuário com base em `username` e `password`.
+        Caso as credenciais estejam corretas, o endpoint:
+
+        - Registra o acesso do usuário na tabela `UserAccess`
+        - Verifica se já existe um *refresh token* válido no banco
+        - Caso exista, reutiliza o refresh token e gera um novo access token
+        - Caso **não exista**, cria um novo refresh token e salva no banco
+        - Retorna `access_token` e `refresh_token`
+
+        O `access_token` é curto (ex.: 15 minutos).
+        O `refresh_token` é válido por mais tempo (ex.: 1 dia) e reaproveitado até expirar.
+
     parameters:
-      - in: body
-        name: body
-        required: true
-        description: Credenciais do usuário.
-        schema:
-          type: object
-          required:
-            - username
-            - password
-          properties:
-            username:
-              type: string
-              example: "johndoe"
-            password:
-              type: string
-              example: "my_password"
+        - in: body
+          name: body
+          required: true
+          schema:
+              type: object
+              properties:
+                  username:
+                      type: string
+                      example: "hugo"
+                  password:
+                      type: string
+                      example: "123456"
+              required:
+                  - username
+                  - password
+
     responses:
-      200:
-        description: Login bem-sucedido.
-        schema:
-          type: object
-          properties:
-            access_token:
-              type: string
-              description: Token JWT de acesso de curta duração.
-            refresh_token:
-              type: string
-              description: Token JWT usado para renovar o token de acesso.
-      401:
-        description: Credenciais inválidas.
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
-              example: "Usuário ou senha inválidas"
+        200:
+            description: Autenticação realizada com sucesso.
+            schema:
+                type: object
+                properties:
+                    access_token:
+                        type: string
+                    refresh_token:
+                        type: string
+        401:
+            description: Usuário ou senha inválidos.
+
+    returns:
+        JSON: Tokens JWT ou mensagem de erro.
     '''
     
     data = request.get_json(force=True)
@@ -155,7 +152,7 @@ def login():
 
       new_refresh_token_to_db = RefreshTokenManager(username=data['username']
                                 , refresh_token = refresh_token
-                                , refresh_token_expire_at = datetime.utcnow() + timedelta(days=1) #Verificar com o Config
+                                , refresh_token_expire_at = datetime.utcnow() + Config.JWT_REFRESH_TOKEN_EXPIRES #Verificar com o Config
 
                                 )
         

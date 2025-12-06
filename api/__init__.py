@@ -14,6 +14,9 @@ from api.routes.stats import stats_bp
 
 from api.models.__init__ import db
 
+from api.logs.routes_middleware import register_route_logger
+
+
 
 bcrypt = Bcrypt()
 logger = logging.getLogger('api.auth')
@@ -24,6 +27,7 @@ def create_app():
     
     app = Flask(__name__)
     app.config.from_object(Config)
+
 
     #inicializa as extensões com o app
     db.init_app(app)
@@ -53,6 +57,9 @@ def create_app():
     app.register_blueprint(categories_bp, url_prefix='/api/v1')
     app.register_blueprint(books_bp, url_prefix='/api/v1/books')
     app.register_blueprint(stats_bp, url_prefix='/api/v1/stats')
+
+    #Registrar todaas as requisições feitas
+    register_route_logger(app)
 
     #rota raiz
     @app.route('/')
