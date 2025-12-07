@@ -11,11 +11,11 @@ from api.routes.health import health_bp
 from api.routes.categories import categories_bp
 from api.routes.books import books_bp
 from api.routes.stats import stats_bp
+from api.routes.scrape import scrape_bp
 
 from api.models.__init__ import db
 
 from api.logs.routes_middleware import register_route_logger
-
 
 
 bcrypt = Bcrypt()
@@ -28,7 +28,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-
     #inicializa as extensões com o app
     db.init_app(app)
     jwt = JWTManager(app)
@@ -39,7 +38,7 @@ def create_app():
     @jwt.unauthorized_loader
     def unauthorized_callback(callback):
         if 'Missing' in str(callback) or 'Authorization header' in str(callback):
-            return jsonify({'msg': 'Token não informado'}), 401
+            return jsonify({'error': 'Token não informado'}), 401
         return jsonify({'error': 'Erro de autenticação'}), 401
 
     @jwt.invalid_token_loader
@@ -57,6 +56,7 @@ def create_app():
     app.register_blueprint(categories_bp, url_prefix='/api/v1')
     app.register_blueprint(books_bp, url_prefix='/api/v1/books')
     app.register_blueprint(stats_bp, url_prefix='/api/v1/stats')
+    app.register_blueprint(scrape_bp, url_prefix='/api/v1/scrape')
 
     #Registrar todaas as requisições feitas
     register_route_logger(app)
