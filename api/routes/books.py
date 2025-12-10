@@ -2,7 +2,7 @@ import logging
 from flask import Blueprint, jsonify, request
 from api.scripts.books_utils import (
     get_all_book_titles, 
-    get_book_by_upc, 
+    get_book_by_id, 
     get_books_by_title_or_category,
     get_books_by_price_range,
     get_top_rated_books
@@ -70,38 +70,42 @@ def book_titles():
         return jsonify({'error': str(e)}), 500
 
 
-@books_bp.route('/<string:upc>', methods=['GET'])
+@books_bp.route('/<string:id>', methods=['GET'])
 @jwt_required()
-def book_details(upc):
+def book_details(id):
     '''
-    Retorna detalhes de um livro conforme upc fornecido.
+    Retorna detalhes de um livro conforme id fornecido.
     ---
     tags:
         - Books
-    summary: Detalhes de um livro conforme upc fornecido.
+    summary: Detalhes de um livro conforme id fornecido.
     description: |
         Endpoint responsável por retornar detalhes de um livro conforme upc fornecido.
     parameters:
         - in: path
-          name: upc
-          type: string
+          name: id
+          type: integer
           required: true
-          description: O UPC (código de produto universal), que é a chave primária do livro.
+          description: O id do livro.
     responses:
         200:
-            description: Detalhes de um livro conforme upc fornecido.
+            description: Detalhes de um livro conforme código fornecido.
             schema:
                 type: object
                 properties:
+                    id:
+                        type: number
+                        format: integer
+                        description: ID do livro.
                     upc:
                         type: string
-                        description: Código de Produto Universal (chave primária).
+                        description: Código do livro.
                     title:
                         type: string
                         description: Título do livro.
                     genre:
                         type: string
-                        description: Gênero ou categoria do livro.
+                        description: Categoria do livro.
                     price:
                         type: number
                         format: float
@@ -176,7 +180,7 @@ def book_details(upc):
                         description: Mensagem de erro para items não encontrados.
             examples:
                 application/json:
-                    msg: 'Livro com UPC a22124811bfa8350 não encontrado'
+                    msg: 'Livro com id 1 não encontrado'
         500:
             description: Erro interno do servidor.
             schema:
@@ -190,10 +194,10 @@ def book_details(upc):
                     error: '<erro interno do servidor>'
     '''
     try:
-        book_details = get_book_by_upc(upc)
+        book_details = get_book_by_id(id)
         if book_details:
             return jsonify(book_details), 200
-        return jsonify({'msg': f'Livro com UPC {upc} não encontrado'}), 404
+        return jsonify({'msg': f'Livro com id {id} não encontrado'}), 404
     except Exception as e:
         logger.error(f'error: {e}')
         return jsonify({'error': str(e)}), 500
@@ -215,12 +219,12 @@ def books_by_title_category():
           name: title
           type: string
           required: false
-          description: Título parcial para busca.
+          description: Título para busca.
         - in: query
           name: genre
           type: string
           required: false
-          description: Categoria/gênero parcial para busca.
+          description: Categoria para busca.
     responses:
         200:
             description: Listagem de livros por título e/ou categoria.
@@ -231,13 +235,13 @@ def books_by_title_category():
                     properties:
                         upc: 
                             type: string
-                            description: Código de produto universal
+                            description: Código do livro.
                         title: 
                             type: string
                             description: Título do livro.
                         genre: 
                             type: string
-                            description: Gênero ou categoria do livro.
+                            description: Categoria do livro.
                         price: 
                             type: number
                             format: float
@@ -339,7 +343,7 @@ def books_by_price_range_route(): # Renomeada para evitar conflito com a importa
                     properties:
                         genre: 
                             type: string
-                            description: Gênero ou categoria do livro.
+                            description: Categoria do livro.
                         price: 
                             type: number
                             format: float
@@ -349,7 +353,7 @@ def books_by_price_range_route(): # Renomeada para evitar conflito com a importa
                             description: Título do livro.
                         upc: 
                             type: string
-                            description: Código de produto universal
+                            description: Código do livro.
             examples:
                 application/json:
                     - genre: 'Young Adult'
@@ -442,7 +446,7 @@ def books_top_rated():
                     properties:
                         genre: 
                             type: string
-                            description: Gênero ou categoria do livro.
+                            description: Categoria do livro.
                         price: 
                             type: number
                             format: float
@@ -455,7 +459,7 @@ def books_top_rated():
                             description: Título do livro.
                         upc: 
                             type: string
-                            description: Código de produto universal
+                            description: Código do livro.
             examples:
                 application/json:
                     - genre: 'Sequential Art'

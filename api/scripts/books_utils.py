@@ -46,7 +46,7 @@ def get_all_book_titles():
         return None
     
 
-def get_book_by_upc(upc):
+def get_book_by_id(id):
     '''
     Retorna todos os detalhes de um livro com base no seu Código Universal do Produto (UPC).
 
@@ -57,9 +57,10 @@ def get_book_by_upc(upc):
         dict: Um dicionário contendo todos os detalhes do livro, ou None se não for encontrado ou em caso de erro.
     '''
     try:
-        book = Books.query.filter_by(upc=upc).first()
+        book = Books.query.filter_by(id=id).first()
         if book:
             result = {
+                'id': book.id,
                 'upc': book.upc,
                 'title': book.title,
                 'genre': book.genre,
