@@ -12,6 +12,7 @@ from api.routes.categories import categories_bp
 from api.routes.books import books_bp
 from api.routes.stats import stats_bp
 from api.routes.scrape import scrape_bp
+from api.routes.ml import ml_bp
 
 from api.models.__init__ import db
 
@@ -57,6 +58,7 @@ def create_app():
     app.register_blueprint(books_bp, url_prefix='/api/v1/books')
     app.register_blueprint(stats_bp, url_prefix='/api/v1/stats')
     app.register_blueprint(scrape_bp, url_prefix='/api/v1/scrape')
+    app.register_blueprint(ml_bp, url_prefix='/api/v1/ml')
 
     #Registrar todaas as requisições feitas
     register_route_logger(app)

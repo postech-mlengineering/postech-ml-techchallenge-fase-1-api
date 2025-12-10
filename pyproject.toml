@@ -21,7 +21,8 @@ dependencies = [
     "flask-jwt-extended (>=4.7.1,<5.0.0)",
     "psycopg2-binary (>=2.9.11,<3.0.0)",
     "flask-bcrypt (>=1.0.1,<2.0.0)",
-    "alembic (>=1.17.2,<2.0.0)"
+    "alembic (>=1.17.2,<2.0.0)",
+    "nltk (>=3.9.2,<4.0.0)"
 ]
 
 
