@@ -1,32 +1,35 @@
-# Use uma imagem base oficial do Python
 FROM python:3.11-slim
 
-# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Instala dependências do sistema necessárias (se houver) e o Poetry
+# Instala dependências do sistema
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install poetry
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Configura o Poetry para não criar ambiente virtual (instala no sistema do container)
+# Instala o Poetry (método recomendado)
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="/root/.local/bin:$PATH"
+
+# Poetry instala libs diretamente no sistema
 RUN poetry config virtualenvs.create false
 
-# Copia os arquivos de definição de dependências
+# Copia arquivos de dependência
 COPY pyproject.toml poetry.lock ./
 
-# Instala as dependências do projeto (sem as de desenvolvimento)
+# Instala dependências
 RUN poetry install --without dev --no-interaction --no-ansi
 
-# Copia o restante do código da aplicação
+# Copia aplicação
 COPY . .
 
-# Expõe a porta que a aplicação (Flask) vai rodar
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
 EXPOSE 5000
 
-# Comando para rodar a aplicação
-# Nota: É recomendável usar um servidor WSGI como Gunicorn em produção,
-# mas para este passo seguiremos com o app.py conforme estrutura atual ou desenvolvimento.
 CMD ["python", "app.py"]
