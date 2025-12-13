@@ -17,6 +17,6 @@ class Config(object):
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=1440)
 
-class TestingConfig(object):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     TESTING = True

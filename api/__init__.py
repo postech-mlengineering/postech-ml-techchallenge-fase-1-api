@@ -30,7 +30,7 @@ def create_app(testing=False):
     app = Flask(__name__)
 
     if testing:
-        app.config.from_object(TestingConfig) #Quando for teste usar o sqlite em memoria
+        app.config.from_object(TestingConfig) #quando for teste usar o sqlite em memoria
     else:
         app.config.from_object(Config)
 
