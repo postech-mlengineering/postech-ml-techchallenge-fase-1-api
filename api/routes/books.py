@@ -145,6 +145,7 @@ def book_details(id):
                         description: URL relativa à imagem  do produto.
             examples:
                 application/json: 
+                    id: 1
                     upc: 'a228380e22709289'
                     title: 'The White Queen'
                     genre: 'Historical'
@@ -233,6 +234,9 @@ def books_by_title_category():
                 items:
                     type: object
                     properties:
+                        id:
+                            type: integer
+                            description: ID do livro.
                         upc: 
                             type: string
                             description: Código do livro.
@@ -246,12 +250,17 @@ def books_by_title_category():
                             type: number
                             format: float
                             description: Preço do livro.
+                        image_url:
+                            type: string
+                            description: URL da imagem do produto.
             examples:
                 application/json: 
-                    - upc: '123'
+                    - id: 1
+                      upc: '123'
                       title: 'Livro A'
                       genre: 'Fantasia'
                       price: 10.00
+                      image_url: 'http://example.com/image.jpg'
         400:
             description: Parâmetros ausentes.
             schema:
@@ -313,7 +322,7 @@ def books_by_title_category():
 
 @books_bp.route('/price-range', methods=['GET'])
 @jwt_required()
-def books_by_price_range_route(): # Renomeada para evitar conflito com a importação
+def books_by_price_range_route(): 
     '''
     Retorna livros conforme faixa de preço especificada.
     ---
@@ -341,6 +350,9 @@ def books_by_price_range_route(): # Renomeada para evitar conflito com a importa
                 items:
                     type: object
                     properties:
+                        id:
+                            type: integer
+                            description: ID do livro.
                         genre: 
                             type: string
                             description: Categoria do livro.
@@ -354,12 +366,17 @@ def books_by_price_range_route(): # Renomeada para evitar conflito com a importa
                         upc: 
                             type: string
                             description: Código do livro.
+                        image_url:
+                            type: string
+                            description: URL da imagem do produto.
             examples:
                 application/json:
-                    - genre: 'Young Adult'
+                    - id: 42
+                      genre: 'Young Adult'
                       price: 10.0
                       title: 'An Abundance of Katherines'
                       upc: 'f36d24c309e87e5b'
+                      image_url: 'http://example.com/image.jpg'
         400:
             description: Parâmetros ausentes ou inválidos.
             schema:
@@ -444,6 +461,9 @@ def books_top_rated():
                 items:
                     type: object
                     properties:
+                        id:
+                            type: integer
+                            description: ID do livro.
                         genre: 
                             type: string
                             description: Categoria do livro.
@@ -460,13 +480,18 @@ def books_top_rated():
                         upc: 
                             type: string
                             description: Código do livro.
+                        image_url:
+                            type: string
+                            description: URL da imagem do produto.
             examples:
                 application/json:
-                    - genre: 'Sequential Art'
+                    - id: 101
+                      genre: 'Sequential Art'
                       price: 13.61
                       rating: 'Five'
-                      title: 'Princess Jellyfish 2-in-1 Omnibus, Vol. 01 (Princess Jellyfish 2-in-1 Omnibus #1)'
+                      title: 'Princess Jellyfish 2-in-1 Omnibus, Vol. 01'
                       upc: '0fa6dceead7ce47a'
+                      image_url: 'http://example.com/image.jpg'
         401:
             description: Erro de autenticação JWT.
             schema:

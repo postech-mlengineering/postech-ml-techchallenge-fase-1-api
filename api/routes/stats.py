@@ -38,7 +38,7 @@ def stats_overview():
                         items:
                             type: object
                             properties:
-                                count:
+                                total:
                                     type: integer
                                     description: Quantidade de livros com a avaliação especificada.
                                 rating:
@@ -48,15 +48,15 @@ def stats_overview():
                 application/json:
                     avg_price: 35.07
                     rating_distribution:
-                        - count: 226
+                        - total: 226
                           rating: 'One'
-                        - count: 203
+                        - total: 203
                           rating: 'Three'
-                        - count: 196
+                        - total: 196
                           rating: 'Two'
-                        - count: 196
+                        - total: 196
                           rating: 'Five'
-                        - count: 179
+                        - total: 179
                           rating: 'Four'
                     total_books: 1000
         401:

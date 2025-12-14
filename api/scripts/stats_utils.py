@@ -35,7 +35,7 @@ def get_stats_overview():
         return {
             'total_books': total_books,
             'avg_price': round(avg_price, 2) if avg_price else 0.0,
-            'rating_distribution': [{'rating': r[0], 'count': r[1]} for r in rating_distribution]
+            'rating_distribution': [{'rating': r[0], 'total': r[1]} for r in rating_distribution]
         }
     except Exception as e:
         logger.error(f'error: {e}')

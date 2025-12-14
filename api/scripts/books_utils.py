@@ -48,10 +48,10 @@ def get_all_book_titles():
 
 def get_book_by_id(id):
     '''
-    Retorna todos os detalhes de um livro com base no seu Código Universal do Produto (UPC).
+    Retorna todos os detalhes de um livro com base no seu ID.
 
     Args:
-        upc (str): O código UPC único do livro.
+        id (int): O ID único do livro no banco de dados.
 
     Return:
         dict: Um dicionário contendo todos os detalhes do livro, ou None se não for encontrado ou em caso de erro.
@@ -92,7 +92,7 @@ def get_books_by_title_or_category(title=None, genre=None):
         genre (str, optional): A categoria (gênero) ou parte da categoria a ser buscada. Padrão é None.
 
     Return:
-        list: Uma lista de dicionários contendo UPC, título, gênero e preço dos livros correspondentes.
+        list: Uma lista de dicionários contendo ID, UPC, título, gênero, preço e URL da imagem.
               Retorna uma lista vazia se nenhum filtro for fornecido. Retorna None em caso de erro.
     '''
     try:
@@ -109,10 +109,12 @@ def get_books_by_title_or_category(title=None, genre=None):
         results = []
         for book in books:
             results.append({
+                'id': book.id,
                 'upc': book.upc,
                 'title': book.title,
                 'genre': book.genre,
-                'price': book.price
+                'price': book.price,
+                'image_url': book.image_url
             })
         return results
     except Exception as e:
@@ -129,7 +131,7 @@ def get_books_by_price_range(min_price, max_price):
         max_price (float): O preço máximo do livro.
 
     Return:
-        list: Uma lista de dicionários contendo UPC, título, gênero e preço dos livros na faixa.
+        list: Uma lista de dicionários contendo ID, UPC, título, gênero, preço e URL da imagem.
               Retorna None em caso de erro.
     '''
     try:
@@ -142,10 +144,12 @@ def get_books_by_price_range(min_price, max_price):
         results = []
         for book in books:
             results.append({
+                'id': book.id,
                 'upc': book.upc,
                 'title': book.title,
                 'genre': book.genre,
-                'price': book.price
+                'price': book.price,
+                'image_url': book.image_url
             })
         return results
     except Exception as e:
@@ -161,7 +165,7 @@ def get_top_rated_books(limit=10):
         limit (int, optional): O número máximo de livros a serem retornados. Padrão é 10.
 
     Return:
-        list: Uma lista de dicionários contendo os detalhes básicos (incluindo rating original) dos livros mais bem avaliados.
+        list: Uma lista de dicionários contendo ID, UPC, título, gênero, rating, preço e URL da imagem.
               Retorna None em caso de erro.
     '''
     rating_map = {
@@ -182,11 +186,13 @@ def get_top_rated_books(limit=10):
         results = []
         for book, rating_val in top_books:
             results.append({
+                'id': book.id,
                 'upc': book.upc,
                 'title': book.title,
                 'genre': book.genre,
                 'rating': book.rating,
-                'price': book.price
+                'price': book.price,
+                'image_url': book.image_url
             })
         return results
     except Exception as e:
