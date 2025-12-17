@@ -357,6 +357,7 @@ MIT License
 ## 👥 Autores
 
 - jorgeplatero (jorge.platero@outlook.com)
+- Hugo Dias  - (Linkedin)[https://www.linkedin.com/in/hugo-rodrigues-dias/]
 
 ---
 
