@@ -5,10 +5,13 @@ import os
 from flask import Blueprint, jsonify, request
 from sqlalchemy import text 
 from api.models.books import Books
+from api.models.book_recommendation import BookRecommendation
 from api.models.__init__ import db
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from api.scripts.ml_utils import tokenizer, content_recommender
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 ml_bp = Blueprint('ml', __name__, url_prefix='/api/v1/ml')
 logger = logging.getLogger('api.routes.ml')
@@ -19,6 +22,7 @@ IDX_PATH = 'data/ml_artifacts/idx_series.pkl'
 
 
 @ml_bp.route('/training-data', methods=['GET'])
+@jwt_required()
 def get_training_data():
     '''
     Prepara os dados para treinamento, calcula a matriz de similaridade e salva os artefatos.
@@ -100,6 +104,7 @@ def get_training_data():
 
 
 @ml_bp.route('/predictions', methods=['GET'])
+@jwt_required()
 def make_predictions():
     '''
     Retorna os 10 livros mais similares a um título fornecido usando os artefatos de treinamento.
@@ -180,6 +185,36 @@ def make_predictions():
             return jsonify({'error': error}), 400
             
         logger.info(f'{len(recommendations)} recomendações geradas para: {title}')
+
+        # Obter o user_id do token JWT
+        user_id = get_jwt_identity()
+        if user_id:
+            user_id = int(user_id)  # Converter para inteiro, pois o token retorna string
+
+        # Encontrar o ID do livro original
+        original_book = df[df['title'] == title]
+        original_book_id = original_book['id'].iloc[0] if not original_book.empty else None
+
+        # Salvar as recomendações no banco de dados
+        saved_recommendations = []
+        try:
+            for rec in recommendations:
+                book_recommendation = BookRecommendation(
+                    user_id=user_id,
+                    original_title=title,
+                    original_book_id=original_book_id,
+                    recommended_book_id=rec['id'],
+                    similarity_score=rec['similarity_score']
+                )
+                db.session.add(book_recommendation)
+                saved_recommendations.append(book_recommendation)
+            
+            db.session.commit()
+            logger.info(f'{len(saved_recommendations)} recomendações salvas no banco de dados para: {title}')
+        except Exception as save_error:
+            db.session.rollback()
+            logger.error(f'Erro ao salvar recomendações no banco de dados: {save_error}')
+            # Continua e retorna as recomendações mesmo se não conseguir salvar
 
         return jsonify(recommendations), 200
 
