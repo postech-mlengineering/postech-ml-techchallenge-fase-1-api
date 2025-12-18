@@ -356,9 +356,9 @@ MIT License
 
 ## 👥 Autores
 
-- jorgeplatero (jorge.platero@outlook.com)
-- Hugo Dias  - (Linkedin)[https://www.linkedin.com/in/hugo-rodrigues-dias/]
-
+- jorge Platero [Linkedin](https://www.linkedin.com/in/jorgeplatero/)
+- Hugo Rodrigues [Linkedin](https://www.linkedin.com/in/hugo-rodrigues-dias/)
+- Leandro [Linkedin](https://www.linkedin.com/in/leandro-delisposti/)
 ---
 
 **Desenvolvido para o Tech Challenge da Fase 1 da Pós-Graduação em Machine Learning Engineering da FIAP**
