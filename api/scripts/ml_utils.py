@@ -6,11 +6,10 @@ import unicodedata
 from nltk.tokenize import word_tokenize
 nltk.download('punkt')
 nltk.download('stopwords')
+nltk.download('punkt_tab')
 from nltk.corpus import stopwords
 
-
 logger = logging.getLogger('api.scripts.ml_utils')
-
 
 def normalize_accents(text):
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('utf-8')
