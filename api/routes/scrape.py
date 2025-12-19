@@ -10,8 +10,8 @@ scrape_bp = Blueprint('scrape', __name__)
 logger = logging.getLogger('api.routes.scrape')
 
 
-@scrape_bp.route('/scrape-and-insert', methods=['POST'])
-def scrape_and_insert_data():
+@scrape_bp.route('/scrape', methods=['POST'])
+def scrape():
     '''
     Executa o web scraping, salva CSV e insere novos registros na tabela books.
     ---

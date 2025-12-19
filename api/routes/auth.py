@@ -9,7 +9,7 @@ from api.models.user import db, User
 from api.models.users_access import UserAccess
 from api.models.refresh_token_manager import RefreshTokenManager
 from datetime import datetime
-from api.scripts.user_utils import get_user_by_username
+from api.scripts.auth_utils import get_user_by_username
 from api.config.config import Config
 
 

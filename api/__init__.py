@@ -62,7 +62,7 @@ def create_app(testing=False):
     app.register_blueprint(categories_bp, url_prefix='/api/v1')
     app.register_blueprint(books_bp, url_prefix='/api/v1/books')
     app.register_blueprint(stats_bp, url_prefix='/api/v1/stats')
-    app.register_blueprint(scrape_bp, url_prefix='/api/v1/scrape')
+    app.register_blueprint(scrape_bp, url_prefix='/api/v1')
     app.register_blueprint(ml_bp, url_prefix='/api/v1/ml')
 
     #Registrar todaas as requisições feitas

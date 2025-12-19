@@ -236,7 +236,7 @@ def run_scraping_and_save_data() -> pd.DataFrame:
     file_path = 'data/books.csv'
 
     df_books.to_csv(file_path, index=False, encoding='utf-8')
-    logging.info(f'\nDados salvos em "{file_path}"')
+    logging.info(f'Dados salvos em "{file_path}"')
 
     return df_books
 

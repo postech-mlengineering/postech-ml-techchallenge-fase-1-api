@@ -4,9 +4,13 @@ import re
 import string
 import unicodedata
 from nltk.tokenize import word_tokenize
+nltk.download('stopwords')
+nltk.download('punkt_tab')
 from nltk.corpus import stopwords
 
+
 logger = logging.getLogger('api.scripts.ml_utils')
+
 
 def normalize_accents(text):
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('utf-8')
@@ -28,7 +32,7 @@ def normalize_str(text):
 
 
 def tokenizer(text):
-    stop_words = nltk.corpus.stopwords.words('english')
+    stop_words = stopwords.words('english')
     if isinstance(text, str):
         text = normalize_str(text)
         text = ''.join([w for w in text if not w.isdigit()])
@@ -40,7 +44,7 @@ def tokenizer(text):
         return None
     
 
-def content_recommender(title, cosine_sim, df, idx):
+def recommender(title, cosine_sim, df, idx):
     '''
     Função de recomendação baseada no conteúdo.
     '''
