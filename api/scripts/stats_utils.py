@@ -1,5 +1,5 @@
 import logging
-from sqlalchemy import case, func
+from sqlalchemy import func
 from api.models.books import Books
 
 

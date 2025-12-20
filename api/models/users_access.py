@@ -1,6 +1,6 @@
 import logging
 import datetime
-from api.models.__init__ import db
+from api.extensions import db
 
 
 logger = logging.getLogger('__name__')

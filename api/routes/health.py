@@ -53,7 +53,6 @@ def health_check():
     try:
         db_connected = check_db_connection()
         db_status_str = 'UP' if db_connected else 'DOWN'
-
         response = {
             'api_status': 'OK',
             'db_status': db_status_str,
@@ -62,4 +61,4 @@ def health_check():
         return jsonify(response), 200
     except Exception as e:
         logger.error(f'error: {e}')
-        return jsonify({'error': e}), 500
+        return jsonify({'error': str(e)}), 500

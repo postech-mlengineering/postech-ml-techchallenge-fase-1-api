@@ -3,10 +3,9 @@ import pandas as pd
 import joblib
 import os
 from flask import Blueprint, jsonify, request
-from sqlalchemy import text 
 from api.models.books import Books
 from api.models.user_preferences import UserPreferences
-from api.models.__init__ import db
+from api.extensions import db, cache
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from api.scripts.ml_utils import tokenizer, recommender
@@ -28,7 +27,7 @@ def training_data():
     Prepara os dados para treinamento, calcula a matriz de similaridade e salva os artefatos.
     ---
     tags:
-        - ml 
+        - ML 
     summary: Preparação de dados e artefatos de treinamento.
     description: |
         Lê todos os livros do banco de dados, pré-processa as descrições, calcula a matriz de similaridade do cosseno 
@@ -63,7 +62,7 @@ def training_data():
     '''
     try:
         query = db.session.execute(db.select(Books)).scalars().all()
-        df = pd.DataFrame([book.__dict__ for book in query])
+        df = pd.DataFrame([book.to_dict() for book in query])
         
         if df.empty:
             return jsonify({'msg': 'Nenhum dado encontrado no banco de dados para treinamento.'}), 200
@@ -105,6 +104,7 @@ def training_data():
 
 @ml_bp.route('/predictions', methods=['GET'])
 @jwt_required()
+@cache.memoize(timeout=3600)
 def predictions():
     '''
     Retorna os 10 livros mais similares a um título fornecido usando os artefatos de treinamento.
@@ -212,10 +212,11 @@ def predictions():
     except Exception as e:
         logger.error(f'error: {e}')
         return jsonify({'error': str(e)}), 500
-    
+
 
 @ml_bp.route('/user-preferences/<int:user_id>', methods=['GET'])
 @jwt_required()
+@cache.memoize(timeout=3600)
 def user_preferences(user_id):
     '''
     Retorna o histórico de recomendações (preferências) de um usuário específico.

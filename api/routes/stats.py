@@ -1,4 +1,5 @@
 import logging
+from api.extensions import cache
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 from api.scripts.stats_utils import get_stats_overview, get_stats_by_category
@@ -10,6 +11,7 @@ stats_bp = Blueprint('stats', __name__)
 
 @stats_bp.route('/overview', methods=['GET'])
 @jwt_required()
+@cache.cached(timeout=3600)
 def stats_overview():
     '''
     Retorna estatísticas gerais da coleção.
@@ -89,11 +91,12 @@ def stats_overview():
         return jsonify({'msg': 'Nenhuma estatística disponível'}), 404
     except Exception as e:
         logger.error(f'error: {e}')
-        return jsonify({'error': e}), 500
+        return jsonify({'error': str(e)}), 500
 
 
 @stats_bp.route('/categories', methods=['GET'])
 @jwt_required()
+@cache.cached(timeout=3600)
 def stats_categories():
     '''
     Retorna estatísticas detalhadas por categoria.
@@ -163,4 +166,4 @@ def stats_categories():
         return jsonify({'msg': 'Nenhuma estatística de categoria disponível'}), 404
     except Exception as e:
         logger.error(f'error: {e}')
-        return jsonify({'error': e}), 500
+        return jsonify({'error': str(e)}), 500

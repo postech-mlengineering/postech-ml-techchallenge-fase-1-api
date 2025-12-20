@@ -1,8 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-
-
-db = SQLAlchemy()
-
+from api.extensions import db
 
 from . import books
 from . import user

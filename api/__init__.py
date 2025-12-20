@@ -1,27 +1,23 @@
 import logging
 from flask import Flask, jsonify
-from flask_jwt_extended import JWTManager
-from flasgger import Swagger
 from sqlalchemy import inspect
-from flask_bcrypt import Bcrypt
-
-from api.config.config import Config
-from api.config.config import TestingConfig
+#extensões
+from api.extensions import db, jwt, swagger, bcrypt, cache
+#configurações
+from api.config import Config, TestingConfig
+#blueprints
 from api.routes.auth import auth_bp
 from api.routes.health import health_bp
-from api.routes.categories import categories_bp
+from api.routes.genres import genres_bp
 from api.routes.books import books_bp
 from api.routes.stats import stats_bp
 from api.routes.scrape import scrape_bp
 from api.routes.ml import ml_bp
 
-from api.models.__init__ import db
-
-from api.logs.routes_middleware import register_route_logger
+from api.logs import register_route_logger
 
 
 logger = logging.getLogger('__name__')
-bcrypt = Bcrypt()
 
 
 def create_app(testing=False):
@@ -35,11 +31,12 @@ def create_app(testing=False):
     else:
         app.config.from_object(Config)
 
-    #inicializa as extensões com o app
+    #inicializa as extensões
     db.init_app(app)
-    jwt = JWTManager(app)
-    swagger = Swagger(app)
-    bcrypt.init_app(app) #inicialização da instância de bcrypt que está no auth.py
+    jwt.init_app(app)
+    swagger.init_app(app)
+    bcrypt.init_app(app)
+    cache.init_app(app)
 
     #tratamento de erros do JWT
     @jwt.unauthorized_loader
@@ -60,7 +57,7 @@ def create_app(testing=False):
     #registro de blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     app.register_blueprint(health_bp, url_prefix='/api/v1')
-    app.register_blueprint(categories_bp, url_prefix='/api/v1')
+    app.register_blueprint(genres_bp, url_prefix='/api/v1')
     app.register_blueprint(books_bp, url_prefix='/api/v1/books')
     app.register_blueprint(stats_bp, url_prefix='/api/v1/stats')
     app.register_blueprint(scrape_bp, url_prefix='/api/v1')

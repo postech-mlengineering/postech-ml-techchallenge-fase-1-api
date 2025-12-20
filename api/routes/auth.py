@@ -1,19 +1,18 @@
 import logging
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     create_access_token, get_jwt_identity, 
     jwt_required, create_refresh_token
 )
-from flask_bcrypt import Bcrypt
-from api.models.user import db, User
+from api.extensions import db, bcrypt
+from api.models.user import User
 from api.models.users_access import UserAccess
 from api.models.refresh_token_manager import RefreshTokenManager
-from datetime import datetime
 from api.scripts.auth_utils import get_user_by_username
-from api.config.config import Config
+from api.config import Config
 
 
-bcrypt = Bcrypt()
 logger = logging.getLogger('__name__')
 auth_bp = Blueprint('auth', __name__)
 
@@ -84,7 +83,7 @@ def register_user():
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         new_user = User(username=data['username'], password=hashed_password)
         db.session.add(new_user)
-        db.session.flush() # Flush para obter o user.id antes do commit final
+        db.session.flush()
 
         access_token = create_access_token(identity=str(new_user.id))
         refresh_token = create_refresh_token(identity=str(new_user.id))
@@ -168,55 +167,63 @@ def login():
             examples:
                 application/json:
                     error: 'Usuário ou senha inválidas'
-
+        500:
+            description: Erro interno do servidor.
+            schema:
+                type: object
+                properties:
+                    error:
+                        type: string
+                        description: Mensagem de erro interno do servidor.
+            examples:
+                application/json:
+                    error: '<erro interno do servidor>'
     returns:
         JSON: Tokens JWT ou mensagem de erro.
     '''
     data = request.get_json(force=True)
-    user = get_user_by_username(data['username'])
+    username = data.get('username')
+    password = data.get('password')
 
-    if not user:
+    if not username or not password:
+        return jsonify({'error': 'Usuário e senha são obrigatórios'}), 400
+    user = get_user_by_username(username)
+    if not user or not bcrypt.check_password_hash(user.password, password):
         return jsonify({'error': 'Usuário ou senha inválidas'}), 401
-    
-    if user and bcrypt.check_password_hash(user.password, data['password']):
-
-        new_login = UserAccess(username=data['username'], created_at = datetime.utcnow())
-
+    try:
+        new_login = UserAccess(username=username, created_at=datetime.utcnow())
         db.session.add(new_login)
-        db.session.commit()
-            
         existing_refresh_token = (
             RefreshTokenManager.query.filter(
-                    RefreshTokenManager.username == user.username,
-                    RefreshTokenManager.refresh_token_expire_at > datetime.utcnow()
-                ).order_by(RefreshTokenManager.created_at.desc()).first()
-            )
-        
+                RefreshTokenManager.username == user.username,
+                RefreshTokenManager.refresh_token_expire_at > datetime.utcnow()
+            ).order_by(RefreshTokenManager.created_at.desc()).first()
+        )
+        access_token = create_access_token(identity=str(user.id))
         if existing_refresh_token:
-            access_token = create_access_token(identity=str(user.id))
+            db.session.commit()
             return jsonify({
                 'access_token': access_token,
                 'refresh_token': existing_refresh_token.refresh_token,
                 'user_id': user.id
             }), 200
-        
-        access_token = create_access_token(identity=str(user.id))
         refresh_token = create_refresh_token(identity=str(user.id))
         new_refresh_token_to_db = RefreshTokenManager(
-            username=data['username'],
-            refresh_token = refresh_token,
-            refresh_token_expire_at = datetime.utcnow() + Config.JWT_REFRESH_TOKEN_EXPIRES
+            username=username,
+            refresh_token=refresh_token,
+            refresh_token_expire_at=datetime.utcnow() + Config.JWT_REFRESH_TOKEN_EXPIRES
         )
         db.session.add(new_refresh_token_to_db)
         db.session.commit()
-
         return jsonify({
             'access_token': access_token, 
             'refresh_token': refresh_token,
             'user_id': user.id
         }), 200
-        
-    return jsonify({'error': 'Usuário ou senha inválidas'}), 401
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'error: {e}')
+        return jsonify({'error': e}), 500
 
 
 @auth_bp.route('/refresh', methods=['POST'])

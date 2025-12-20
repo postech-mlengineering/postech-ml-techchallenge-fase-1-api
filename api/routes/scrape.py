@@ -1,9 +1,9 @@
 import logging
 from flask import Blueprint, jsonify
 from api.models.books import Books
-from api.models.__init__ import db
+from api.extensions import db
 from sqlalchemy import text 
-from api.scripts.scrape_utils import run_scraping_and_save_data
+from api.scripts.scrape_utils import run_scraping
 
 
 logger = logging.getLogger('__name__')
@@ -16,7 +16,7 @@ def scrape():
     Executa o web scraping, salva CSV e insere novos registros na tabela books.
     ---
     tags:
-        - scrape 
+        - Scrape 
     summary: Web scraping e inserção de dados.
     description: |
         Endpoint responsável pelo processo de web scraping e inserção de novos registros na tabela books.
@@ -49,26 +49,23 @@ def scrape():
                     error: '<erro interno do servidor>'
     '''
     try:
-        logger.info('Iniciando o processo de scraping.')
-        df_books = run_scraping_and_save_data()
-        
-        if df_books.empty:
-            return jsonify({'msg': 'Scraping finalizado, mas nenhum dado foi coletado.'}), 200
-        
-        with db.session.begin():
-            truncate_sql = f'TRUNCATE TABLE {Books.__tablename__} RESTART IDENTITY;'
-            db.session.execute(text(truncate_sql)) 
+        logger.info('Iniciando scraping no Postgres...')
+        df_books = run_scraping()
 
-            data_to_insert = df_books.to_dict(orient='records') 
-            total_inserted = len(data_to_insert)
-            
-            db.session.bulk_insert_mappings(Books, data_to_insert)
-            
-            logger.info(f'{total_inserted} novos registros inseridos na tabela books.')
+        if df_books is None or df_books.empty:
+            return jsonify({'msg': 'Nenhum dado coletado.'}), 200
+        
+        truncate_sql = text(f'TRUNCATE TABLE {Books.__tablename__} RESTART IDENTITY CASCADE;')
+        
+        db.session.execute(truncate_sql)
+        data_to_insert = df_books.to_dict(orient='records') 
+        db.session.bulk_insert_mappings(Books, data_to_insert)
+
+        db.session.commit()
 
         return jsonify({
-            'msg': 'Dados coletados, salvos em CSV e inseridos no banco de dados com sucesso',
-            'total_records': total_inserted
+            'msg': 'Scraping concluído',
+            'Total de registros inseridos': len(data_to_insert)
         }), 200
 
     except Exception as e:

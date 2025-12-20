@@ -1,4 +1,5 @@
 import logging
+from api.extensions import cache
 from flask import Blueprint, jsonify, request
 from api.scripts.books_utils import (
     get_all_book_titles, 
@@ -16,6 +17,7 @@ books_bp = Blueprint('books', __name__)
 
 @books_bp.route('/titles', methods=['GET'])
 @jwt_required()
+@cache.cached(timeout=3600)
 def book_titles():
     '''
     Retorna a lista de todos os títulos de livros cadastrados no sistema.
@@ -72,6 +74,7 @@ def book_titles():
 
 @books_bp.route('/<string:id>', methods=['GET'])
 @jwt_required()
+@cache.memoize(timeout=3600)
 def book_details(id):
     '''
     Retorna detalhes de um livro conforme id fornecido.
@@ -206,6 +209,7 @@ def book_details(id):
 
 @books_bp.route('/search', methods=['GET'])
 @jwt_required()
+@cache.memoize(timeout=3600)
 def books_by_title_category():
     '''
     Retorna livros por título e/ou categoria conforme parâmetros fornecidos.
@@ -322,6 +326,7 @@ def books_by_title_category():
 
 @books_bp.route('/price-range', methods=['GET'])
 @jwt_required()
+@cache.memoize(timeout=3600)
 def books_by_price_range_route(): 
     '''
     Retorna livros conforme faixa de preço especificada.
@@ -438,6 +443,7 @@ def books_by_price_range_route():
 
 @books_bp.route('/top-rated', methods=['GET'])
 @jwt_required()
+@cache.cached(timeout=3600)
 def books_top_rated():
     '''
     Lista os livros com a melhor avaliação (rating mais alto).

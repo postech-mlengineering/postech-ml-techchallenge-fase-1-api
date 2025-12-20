@@ -6,7 +6,7 @@ from api.models.books import Books
 logger = logging.getLogger('__name__')
 
 
-def get_all_categories():
+def get_all_genres():
     '''
     Retorna todas as categorias (gêneros) de livros únicas disponíveis no banco de dados.
 

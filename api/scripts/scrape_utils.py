@@ -189,7 +189,7 @@ def scrape_category(category: Dict[str, str], data_list: List[Dict[str, Any]]) -
             break
 
 
-def run_scraping_and_save_data() -> pd.DataFrame:
+def run_scraping() -> pd.DataFrame:
     '''
     Executa o scraping, salva o CSV em api/data e retorna o DataFrame.
     '''
