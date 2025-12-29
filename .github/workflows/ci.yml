@@ -1,0 +1,37 @@
+name: CI - TESTES APLICACAO
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "poetry"
+
+      - name: Instalar Poetry
+        run: |
+          pip install poetry
+
+      - name: Configurar Poetry (sem venv local)
+        run: |
+          poetry config virtualenvs.create false
+
+      - name: Instalar dependências
+        run: |
+          poetry install --no-interaction --no-root
+
+      - name: Rodar testes com pytest
+        run: |
+          poetry run pytest -v
