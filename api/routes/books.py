@@ -20,7 +20,7 @@ books_bp = Blueprint('books', __name__)
 @cache.cached(timeout=3600)
 def book_titles():
     '''
-    Retorna lista com todos os títulos de livros cadastrados
+    Retorna lista com todos os títulos de livros cadastrados 
     ---
     tags:
         - Books

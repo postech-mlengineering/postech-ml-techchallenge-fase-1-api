@@ -48,6 +48,7 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["."]
 markers = [
+    "integration: para as rotas de integracao",
     "auth: teste das rotas de autenticação",
     "register: testes específicos para o endpoint register",
     "login: testes específico para o endpoint login",
@@ -57,5 +58,6 @@ markers = [
     "book_id: testes especificos para o endoinp book_id",
     "search: testes especificos para o endoinp search",
     "price_range: testes especificos para o endoinp price_range",
-    "top_rated: testes especificos para o endoinp top_rated"
+    "top_rated: testes especificos para o endoinp top_rated",
+    "genres: testes especificos para o endpoint genres"
 ]
