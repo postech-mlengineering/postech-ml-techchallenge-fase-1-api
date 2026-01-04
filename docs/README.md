@@ -6,7 +6,7 @@ Como resultado, a solução consolidou a integração de rotinas de web scraping
 
 ### Arquitetura
 
-O diagrama abaixo descreve a arquitetura do projeto na sua integridade e com sua principais funcionalidades:
+O diagrama abaixo ilustra a arquitetura do projeto na sua integridade e com suas principais funcionalidades:
 
 ```mermaid
 graph LR
