@@ -62,7 +62,6 @@ Para instalar o Poetry, use o método oficial:
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-
 ### Instalação
 
 Clone o repositório e instale as dependências listadas no pyproject.toml:
@@ -166,13 +165,13 @@ A aplicação atua como a camada de serviço (API) que interage com o cliente, o
 
 A API em produção recebe requisições de aplicativo web desenlvolvido com Streamlit, cujo link e repositório pode ser acessado em:
 
-Aplicativo: https://
+Aplicativo:
 
 Repositório GitHub: https://github.com/postech-mlengineering/postech-ml-techchallenge-fase-1-streamlit
 
 ### Deploy
 
-Esta API possui arquivo de configuração para deploy via **Docker** e suporte a variáveis de ambiente. Para produção:
+Esta API possui arquivo de configuração para deploy via **Docker** e suporte a variáveis de ambiente. Em produção:
 
 1. Altere a `JWT_SECRET_KEY` para uma chave forte e armazene-a como variável de ambiente.
 
