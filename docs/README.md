@@ -149,18 +149,18 @@ Motor de inteligência artificial para sugestão de conteúdo.
 
 A aplicação atua como a camada de serviço (API) que interage com o cliente, o motor de ML e o banco de dados.
 
-| Componente | Tecnologia | Versão (Especificada) | Descrição |
+| Componente | Tecnologia | Versão | Descrição |
 | :--- | :--- | :--- | :--- |
-| **Backend/API** | **Flask** | `>=3.1.2, <4.0.0` | Framework Python para o desenvolvimento da API RESTful. |
-| **Machine Learning** | **Scikit-learn** | `>=1.7.2, <2.0.0` | Utilizada para vetorização TF-IDF e cálculo de similaridade de cosseno. |
-| **NLP** | **NLTK** | `>=3.9.2, <4.0.0` | Processamento de linguagem natural para descrições de livros. |
-| **Data Analysis** | **Pandas** | `>=2.3.3, <3.0.0` | Manipulação e estruturação de dados para treinamento e estatísticas. |
-| **Autenticação** | **Flask-JWT-Extended** | `>=4.7.1, <5.0.0` | Segurança via JWT e gestão de ciclo de vida de tokens (Refresh). |
-| **Persistência/ORM** | **Flask-SQLAlchemy** | `>=3.1.1, <4.0.0` | Camada ORM para interação com o banco de dados. |
-| **Migrações DB** | **Alembic** | `>=1.17.2, <2.0.0` | Controle de versão e migrações do esquema de banco de dados. |
-| **Performance** | **Flask-Caching** | `>=2.3.1, <3.0.0` | Sistema de cache para otimização de endpoints de consulta. |
-| **Infraestrutura** | **Docker** | `3.8 (Compose)` | Containerização para garantir paridade de ambiente e deploy. |
-| **Gerenciamento** | **Poetry** | `2.2.1` | Gerenciador de dependências e ambientes virtuais. |
+| **Backend/API** | **Flask** | `>=3.1.2, <4.0.0` | Framework utilizado para a construção da camada de serviços e rotas da API RESTful |
+| **Persistência/ORM** | **Flask-SQLAlchemy** | `>=3.1.1, <4.0.0` | Extensão de mapeamento objeto-relacional (ORM) para abstração e interação com o banco de dados SQL |
+| **Performance** | **Flask-Caching** | `>=2.3.1, <3.0.0` | Extensão de otimização para implementação de camadas de cache, visando reduzir a latência em endpoints de consulta frequente |
+| **Migrações DB** | **Alembic** | `>=1.17.2, <2.0.0` | Biblioteca de versionamento utilizada para gerenciar migrações e alterações estruturais no esquema do banco de dados |
+| **Data Analysis** | **Pandas** | `>=2.3.3, <3.0.0` | Biblioteca de análise de dados para manipulação limpeza durante o processo de ETL e treinamento |
+| **NLP** | **NLTK** | `>=3.9.2, <4.0.0` | Biblioteca de processamento de linguagem natural utilizada na tokenização e pré-processamento de descrições textuais |
+| **Machine Learning** | **Scikit-learn** | `>=1.7.2, <2.0.0` | Biblioteca de ML aplicada na vetorização de textos (TF-IDF) e no cálculo de similaridade de cosseno para o motor de recomendação ||
+| **Linguagem** | **Python** | `>=3.11, <3.14` | Linguagem de programação base para o desenvolvimento dos scripts |
+| **Infraestrutura** | **Docker** | `3.8 (Compose)` | Ferramenta de containerização que garante a paridade entre ambientes |
+| **Gerenciamento** | **Poetry** | `2.2.1` | Gerenciador de pacotes e ambientes virtuais utilizado para garantir a reprodutibilidade das dependências do projeto |
 
 ### Integrações
 
