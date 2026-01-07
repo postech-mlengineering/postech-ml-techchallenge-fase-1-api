@@ -6,8 +6,8 @@ from flask import Blueprint, jsonify, request
 from api.models.books import Books
 from api.models.user_preferences import UserPreferences
 from api.extensions import db, cache
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.metrics.pairwise import linear_kernel
 from api.scripts.ml_utils import tokenizer, recommender
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -102,114 +102,114 @@ def features():
         return jsonify({'error': str(e)}), 500
 
 
-@ml_bp.route('/training-data', methods=['GET'])
-@jwt_required()
-def training_data():
-    '''
-    Realiza o pipeline de treinamento para recomendação de livros
-    ---
-    tags:
-        - ML
-    summary: Pipeline de treinamento para recomendação de livros
-    description: |
-        Endpoint responsável por realizar o pipeline de treinamento, gerando os artefatos para recomendação de livros:
+# @ml_bp.route('/training-data', methods=['GET'])
+# @jwt_required()
+# def training_data():
+#     '''
+#     Realiza o pipeline de treinamento para recomendação de livros
+#     ---
+#     tags:
+#         - ML
+#     summary: Pipeline de treinamento para recomendação de livros
+#     description: |
+#         Endpoint responsável por realizar o pipeline de treinamento, gerando os artefatos para recomendação de livros:
         
-            - Matriz TF-IDF: uma matriz esparsa de dimensão n×m (onde n é o número de livros e m o vocabulário), onde cada linha representa um vetor de características de um livro e cada célula contém o peso estatístico da importância de um termo no contexto global do dataset
-            - Matriz de similaridade: uma matriz quadrada simétrica resultante do cálculo do Produto Escalar (Linear Kernel) entre os vetores da matriz TF-IDF. Ela estabelece a Similaridade de Cosseno, variando de 0 a 1, que quantifica a distância semântica entre todos os pares de livros possíveis
-            - Vetor de índices: vetor unidimensional que mapeia títulos para índices, permitindo a indexação e recuperação eficiente das coordenadas correspondentes na matriz de similaridade
+#             - Matriz TF-IDF: uma matriz esparsa de dimensão n×m (onde n é o número de livros e m o vocabulário), onde cada linha representa um vetor de características de um livro e cada célula contém o peso estatístico da importância de um termo no contexto global do dataset
+#             - Matriz de similaridade: uma matriz quadrada simétrica resultante do cálculo do Produto Escalar (Linear Kernel) entre os vetores da matriz TF-IDF. Ela estabelece a Similaridade de Cosseno, variando de 0 a 1, que quantifica a distância semântica entre todos os pares de livros possíveis
+#             - Vetor de índices: vetor unidimensional que mapeia títulos para índices, permitindo a indexação e recuperação eficiente das coordenadas correspondentes na matriz de similaridade
 
-        Os arquivos são persistidos em disco (arquivos .joblib) para uso pelo endpoint de predição.
-    responses:
-        200:
-            description: Pipeline de treinamento para recomendação de livros
-            schema:
-                type: object
-                properties:
-                    msg:
-                        type: string
-                        description: Mensagem de sucesso.
-                    total_records:
-                        type: integer
-                        description: Número de registros processados.
-                    features:
-                        type: array
-                        description: Lista de livros processados para o treinamento.
-                        items:
-                            type: object
-                            properties:
-                                id:
-                                    type: integer
-                                    example: 1
-                                title:
-                                    type: string
-                                    example: "It's Only the Himalayas"
-                                description:
-                                    type: string
-                                    example: "wherever whatever dont anything stupid..."
-            examples:
-                application/json:
-                    msg: 'Pipeline de treinamento executado com sucesso'
-                    artifacts_saved:
-                        - 'tfidf_vectorizer.pkl'
-                        - 'cosine_sim_matrix.pkl'
-                        - 'idx_series.pkl'
-        401:
-            description: Erro de autenticação JWT.
-            schema:
-                type: object
-                properties:
-                    error:
-                        type: string
-                        description: Mensagem de erro de autenticação.
-            examples:
-                application/json:
-                    error: '<erro de autenticação>'
-        500:
-            description: Erro interno do servidor.
-            schema:
-                type: object
-                properties:
-                    error:
-                        type: string
-                        description: Mensagem de erro interno do servidor.
-            examples:
-                application/json:
-                    error: '<erro interno do servidor>'
-    '''
-    try:
-        query = db.session.execute(db.select(Books)).scalars().all()
-        data = [{'id': book.id, 'title': book.title, 'description': book.description} for book in query]
-        df = pd.DataFrame(data)
+#         Os arquivos são persistidos em disco (arquivos .joblib) para uso pelo endpoint de predição.
+#     responses:
+#         200:
+#             description: Pipeline de treinamento para recomendação de livros
+#             schema:
+#                 type: object
+#                 properties:
+#                     msg:
+#                         type: string
+#                         description: Mensagem de sucesso.
+#                     total_records:
+#                         type: integer
+#                         description: Número de registros processados.
+#                     features:
+#                         type: array
+#                         description: Lista de livros processados para o treinamento.
+#                         items:
+#                             type: object
+#                             properties:
+#                                 id:
+#                                     type: integer
+#                                     example: 1
+#                                 title:
+#                                     type: string
+#                                     example: "It's Only the Himalayas"
+#                                 description:
+#                                     type: string
+#                                     example: "wherever whatever dont anything stupid..."
+#             examples:
+#                 application/json:
+#                     msg: 'Pipeline de treinamento executado com sucesso'
+#                     artifacts_saved:
+#                         - 'tfidf_vectorizer.pkl'
+#                         - 'cosine_sim_matrix.pkl'
+#                         - 'idx_series.pkl'
+#         401:
+#             description: Erro de autenticação JWT.
+#             schema:
+#                 type: object
+#                 properties:
+#                     error:
+#                         type: string
+#                         description: Mensagem de erro de autenticação.
+#             examples:
+#                 application/json:
+#                     error: '<erro de autenticação>'
+#         500:
+#             description: Erro interno do servidor.
+#             schema:
+#                 type: object
+#                 properties:
+#                     error:
+#                         type: string
+#                         description: Mensagem de erro interno do servidor.
+#             examples:
+#                 application/json:
+#                     error: '<erro interno do servidor>'
+#     '''
+#     try:
+#         query = db.session.execute(db.select(Books)).scalars().all()
+#         data = [{'id': book.id, 'title': book.title, 'description': book.description} for book in query]
+#         df = pd.DataFrame(data)
         
-        if df.empty:
-            return jsonify({'msg': 'Nenhum dado encontrado para treinamento.'}), 200
+#         if df.empty:
+#             return jsonify({'msg': 'Nenhum dado encontrado para treinamento.'}), 200
 
-        df['description'] = df['description'].fillna('').apply(tokenizer)
-        df = df[df['description'].str.len() > 0].reset_index(drop=True)
+#         df['description'] = df['description'].fillna('').apply(tokenizer)
+#         df = df[df['description'].str.len() > 0].reset_index(drop=True)
         
-        tfidf = TfidfVectorizer(stop_words='english')
-        tfidf_matrix = tfidf.fit_transform(df['description'])
+#         tfidf = TfidfVectorizer(stop_words='english')
+#         tfidf_matrix = tfidf.fit_transform(df['description'])
         
-        cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+#         cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
         
-        idx = pd.Series(df.index, index=df['title']).drop_duplicates()
+#         idx = pd.Series(df.index, index=df['title']).drop_duplicates()
 
-        os.makedirs('data/ml_artifacts/', exist_ok=True)
-        joblib.dump(tfidf, TFIDF_VECTORIZER_PATH)
-        joblib.dump(cosine_sim, COSINE_SIM_PATH)
-        joblib.dump(idx, IDX_PATH)
+#         os.makedirs('data/ml_artifacts/', exist_ok=True)
+#         joblib.dump(tfidf, TFIDF_VECTORIZER_PATH)
+#         joblib.dump(cosine_sim, COSINE_SIM_PATH)
+#         joblib.dump(idx, IDX_PATH)
 
-        return jsonify({
-            'msg': 'Pipeline de treinamento executado com sucesso',
-            'artifacts_saved': [
-                os.path.basename(TFIDF_VECTORIZER_PATH),
-                os.path.basename(COSINE_SIM_PATH),
-                os.path.basename(IDX_PATH)
-            ]
-        }), 200
-    except Exception as e:
-        logger.error(f'Erro no pipeline de treinamento: {e}')
-        return jsonify({'error': str(e)}), 500
+#         return jsonify({
+#             'msg': 'Pipeline de treinamento executado com sucesso',
+#             'artifacts_saved': [
+#                 os.path.basename(TFIDF_VECTORIZER_PATH),
+#                 os.path.basename(COSINE_SIM_PATH),
+#                 os.path.basename(IDX_PATH)
+#             ]
+#         }), 200
+#     except Exception as e:
+#         logger.error(f'Erro no pipeline de treinamento: {e}')
+#         return jsonify({'error': str(e)}), 500
 
 
 @ml_bp.route('/predictions', methods=['GET'])
