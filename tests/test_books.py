@@ -84,7 +84,7 @@ class TestBooks:
         headers = {'Authorization': f'Bearer {token}'}
         
         #when
-        response = client.get('/api/v1/books/1', headers=headers)
+        response = client.get('/api/v1/books/details/1', headers=headers)
         resultado = response.get_json()
         
         #then
@@ -103,7 +103,7 @@ class TestBooks:
         headers = {'Authorization': f'Bearer {token}'}
         
         #when
-        response = client.get('/api/v1/books/999', headers=headers)
+        response = client.get('/api/v1/books/details/999', headers=headers)
         resultado = response.get_json()
         
         #then

@@ -27,7 +27,7 @@ class TestGenres:
         headers = {'Authorization': f'Bearer {token}'}
 
         #when
-        response = client.get('/api/v1/genres', headers=headers)
+        response = client.get('/api/v1/genres/', headers=headers)
         resultado = response.get_json()
 
         #then
@@ -47,7 +47,7 @@ class TestGenres:
         headers = {'Authorization': f'Bearer {token}'}
 
         #when
-        response = client.get('/api/v1/genres', headers=headers)
+        response = client.get('/api/v1/genres/', headers=headers)
         resultado = response.get_json()
 
         #then
