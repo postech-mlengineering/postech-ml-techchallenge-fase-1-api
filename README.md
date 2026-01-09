@@ -150,16 +150,18 @@ A aplicação atua como a camada de serviço (API) que interage com o cliente, o
 
 | Componente | Tecnologia | Versão | Descrição |
 | :--- | :--- | :--- | :--- |
-| **Backend/API** | **Flask** | `>=3.1.2, <4.0.0` | Framework utilizado para a construção da camada de serviços e rotas da API RESTful |
-| **Persistência/ORM** | **Flask-SQLAlchemy** | `>=3.1.1, <4.0.0` | Extensão de mapeamento objeto-relacional (ORM) para abstração e interação com o banco de dados SQL |
-| **Performance** | **Flask-Caching** | `>=2.3.1, <3.0.0` | Extensão de otimização para implementação de camadas de cache, visando reduzir a latência em endpoints de consulta frequente |
-| **Migrações DB** | **Alembic** | `>=1.17.2, <2.0.0` | Biblioteca de versionamento utilizada para gerenciar migrações e alterações estruturais no esquema do banco de dados |
-| **Data Analysis** | **Pandas** | `>=2.3.3, <3.0.0` | Biblioteca de análise de dados para manipulação limpeza durante o processo de ETL e treinamento |
-| **NLP** | **NLTK** | `>=3.9.2, <4.0.0` | Biblioteca de processamento de linguagem natural utilizada na tokenização e pré-processamento de descrições textuais |
-| **Machine Learning** | **Scikit-learn** | `>=1.7.2, <2.0.0` | Biblioteca de ML aplicada na vetorização de textos (TF-IDF) e no cálculo de similaridade de cosseno para o motor de recomendação ||
-| **Linguagem** | **Python** | `>=3.11, <3.14` | Linguagem de programação base para o desenvolvimento dos scripts |
-| **Infraestrutura** | **Docker** | `3.8 (Compose)` | Ferramenta de containerização que garante a paridade entre ambientes |
-| **Gerenciamento** | **Poetry** | `2.2.1` | Gerenciador de pacotes e ambientes virtuais utilizado para garantir a reprodutibilidade das dependências do projeto |
+| **Backend/API** | **Flask** | `>=3.1.2, <4.0.0` | Framework para o desenvolvimento de API REST |
+| **ORM** | **Flask-SQLAlchemy** | `>=3.1.1, <4.0.0` | Extensão para mapeamento e manipulação de bancos de dados relacionais |
+| **Autenticação** | **Flask-JWT-Extended** | `>=4.7.1, <5.0.0` | Extensão para implementação de segurança e controle de acesso via tokens JWT |
+| **Criptografia** | **Flask-Bcrypt** | `>=1.0.1, <2.0.0` | Extensão de segurança para hashing e verificação robusta de senhas |
+| **Performance** | **Flask-Caching** | `>=2.3.1, <3.0.0` | Extensão de otimização para implementação de camadas de cache |
+| **Migrações DB** | **Alembic** | `>=1.17.2, <2.0.0` | Biblioteca de versionamento utilizada para gerenciar migrações e alterações em esquema de banco de dados |
+| **Análise de Dados** | **Pandas** | `>=2.3.3, <3.0.0` | Biblioteca para manipulação de dados |
+| **NLP** | **NLTK** | `>=3.9.2, <4.0.0` | Biblioteca de processamento de linguagem natural |
+| **ML** | **Scikit-learn** | `>=1.7.2, <2.0.0` | Biblioteca para desenvolvimento de modelos de ML |
+| **Linguagem** | **Python** | `>=3.11, <3.14` | Linguagem para desenvolvimento de scripts |
+| **Infraestrutura** | **Docker** | `3.8 (Compose)` | Ferramenta de containerização para paridade entre ambientes |
+| **Gerenciamento** | **Poetry** | `2.2.1` | Gerenciador de ambientes virtuais para isolamento de dependências |
 
 ### Integrações
 
