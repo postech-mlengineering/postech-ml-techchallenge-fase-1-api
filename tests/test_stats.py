@@ -13,7 +13,7 @@ class TestOverview:
 
     # ========== TESTES DO ENDOINT /titles ==========
     @pytest.mark.integration
-    @pytest.mark.overview
+    @pytest.mark.stats_overview
     #Definindo o mock_get_overview
     @patch('api.routes.stats.get_stats_overview')
     def test_quando_buscar_overview_com_sucesso_deve_retornar_200_com_lista(self, mock_get_overview, client):
@@ -43,7 +43,7 @@ class TestOverview:
         mock_get_overview.assert_called_once()
 
     @pytest.mark.integration
-    @pytest.mark.overview
+    @pytest.mark.stats_overview
     #Definindo o mock_get_overview
     @patch('api.routes.stats.get_stats_overview')
     def test_quando_buscar_overview_e_lista_vir_vazio(self, mock_get_overview, client):
@@ -64,8 +64,8 @@ class TestOverview:
         mock_get_overview.assert_called_once()
 
     @pytest.mark.integration
-    @pytest.mark.genres
-    #Definindo o mock_get_overviewy
+    @pytest.mark.stats_genres
+    #Definindo o mock_get_overview
     @patch('api.routes.stats.get_stats_by_genre')
     def test_quando_buscar_genres_com_sucesso_deve_retornar_200_com_lista(self, mock_get_stats_by_genres, client):
         #given

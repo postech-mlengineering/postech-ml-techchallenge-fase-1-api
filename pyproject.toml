@@ -48,17 +48,21 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["."]
 markers = [
-    "integration: para as rotas de integracao",
-    "auth: teste das rotas de autenticação",
-    "register: testes específicos para o endpoint register",
-    "login: testes específico para o endpoint login",
-    "refresh: testes específicos para o endpoint refresh",
-    "books: test das rotas de books",
-    "titles: testes especifoco para o endpoint titles",
-    "book_id: testes especificos para o endoinp book_id",
-    "search: testes especificos para o endoinp search",
-    "price_range: testes especificos para o endoinp price_range",
-    "top_rated: testes especificos para o endoinp top_rated",
-    "genres: testes especificos para o endpoint genres",
-    "stats: testes especificos para o endpoint stats"
+    "integration: testes dos endpoints com integração com outros serviços",
+    "auth: testes dos endpoints do módulo auth",
+    "register: testes do endpoint do fluxo de registro de novos usuários",
+    "login: testes do endpoint do fluxo de autenticação",
+    "refresh: testes do endpoint do fluxo de renovação de tokens",
+    "books: testes dos endpoints do módulo books",
+    "titles: testes do endpoint de listagem de títulos de livros",
+    "book_id: testes do endpoint de busca de detalhes de um livro por id",
+    "search: testes do endpoint de busca por filtros de título ou gênero",
+    "price_range: testes do endpoint de busca de livros com filtragem por faixa de preço",
+    "top_rated: testes do endpoint de busca de livros mais bem avaliados",
+    "genres: testes do endpoint de listagem de gêneros de livros",
+    "ml: testes dos endpoints do módulo ml",
+    "scrape: testes dos endpoints do módulo scrape",
+    "stats: testes dos endpoints do módulo stats",
+    "stats_overview: testes do endpoint de estatísticas gerais",
+    "stats_genres: testes do endpoint de estatísticas por gênero"
 ]
