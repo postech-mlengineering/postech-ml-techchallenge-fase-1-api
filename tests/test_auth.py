@@ -1,6 +1,7 @@
 import pytest
 import json
 
+
 @pytest.mark.auth
 class TestAuth:
     @pytest.mark.register

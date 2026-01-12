@@ -239,9 +239,3 @@ def run_scraping() -> pd.DataFrame:
     logging.info(f'Dados salvos em "{file_path}"')
 
     return df_books
-
-
-if __name__ == '__main__':
-    df = run_scraping_and_save_data()
-    if not df.empty:
-        print(df.head())

@@ -6,15 +6,11 @@ from flask_jwt_extended import create_access_token
 @pytest.mark.books
 class TestBooks:
     def _get_mock_token(self):
-        """Cria um token mock válido para testes"""
-        # Cria um token somente para vlaidar o endpoint
+        '''Cria um token mock válido para testes'''
         return create_access_token(identity='test_user')
     
-
-    # ========== TESTES DO ENDOINT /titles ==========
     @pytest.mark.integration
     @pytest.mark.titles
-    #Definindo o mock_get_titles
     @patch('api.routes.books.get_all_book_titles')
     def test_quando_buscar_titulos_com_sucesso_deve_retornar_200_com_lista(self, mock_get_titles, client):
         #given
@@ -26,11 +22,9 @@ class TestBooks:
         mock_get_titles.return_value = titulos_esperados
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/titles', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 200
         assert isinstance(resultado, list)
@@ -41,22 +35,18 @@ class TestBooks:
     @pytest.mark.titles
     @patch('api.routes.books.get_all_book_titles')
     def test_quando_buscar_titulos_e_estiver_vazia(self, mock_get_titles, client):
-
         #given
         mock_get_titles.return_value = []
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-
         #when
         response = client.get('/api/v1/books/titles', headers=headers)
         resultado = response.get_json()
-
         #then
         assert response.status_code == 200
         assert resultado['msg'] == 'Não há livros cadastrados'
         mock_get_titles.assert_called_once()
 
-    # ========== TESTES DO ENDPOINT /<string:id>' ==========
     @pytest.mark.integration
     @pytest.mark.book_id
     @patch('api.routes.books.get_book_by_id')
@@ -82,11 +72,9 @@ class TestBooks:
         mock_get_book_by_id.return_value = livro_esperado
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/details/1', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 200
         assert isinstance(resultado, dict)
@@ -101,17 +89,14 @@ class TestBooks:
         mock_get_book_by_id.return_value = None
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/details/999', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 404
         assert resultado['msg'] == 'Livro com id 999 não encontrado'
         mock_get_book_by_id.assert_called_once_with('999')
 
-    # ========== TESTES DO ENDPOINT /search ==========
     @pytest.mark.integration
     @pytest.mark.search
     @patch('api.routes.books.get_books_by_title_or_category')
@@ -138,11 +123,9 @@ class TestBooks:
         mock_get_books.return_value = livros_esperados
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/search?title=Murder', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 200
         assert isinstance(resultado, list)
@@ -167,11 +150,9 @@ class TestBooks:
         mock_get_books.return_value = livros_esperados
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/search?genre=Mystery', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 200
         assert isinstance(resultado, list)
@@ -197,11 +178,9 @@ class TestBooks:
         mock_get_books.return_value = livros_esperados
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/search?title=Test&genre=Fiction', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 200
         assert resultado == livros_esperados
@@ -213,11 +192,9 @@ class TestBooks:
         #given
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/search', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 400
         assert resultado['msg'] == 'Forneça o parâmetro title e/ou genre para a consulta.'
@@ -230,17 +207,14 @@ class TestBooks:
         mock_get_books.return_value = None
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/search?title=Inexistente', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 404
         assert resultado['msg'] == 'Nenhum livro encontrado com os parâmetros fornecidos'
         mock_get_books.assert_called_once_with(title='Inexistente', genre=None)
 
-    # ========== TESTES DO ENDPOINT /price-range ==========
     @pytest.mark.integration
     @pytest.mark.price_range
     @patch('api.routes.books.get_books_by_price_range')
@@ -267,11 +241,9 @@ class TestBooks:
         mock_get_books.return_value = livros_esperados
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/price-range?min=10&max=15', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 200
         assert isinstance(resultado, list)
@@ -284,11 +256,9 @@ class TestBooks:
         #given
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/price-range?max=15', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 400
         assert resultado['msg'] == 'Os parâmetros min e max são obrigatórios.'
@@ -299,11 +269,9 @@ class TestBooks:
         #given
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/price-range?min=10', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 400
         assert resultado['msg'] == 'Os parâmetros min e max são obrigatórios.'
@@ -314,11 +282,9 @@ class TestBooks:
         #given
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/price-range', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 400
         assert resultado['msg'] == 'Os parâmetros min e max são obrigatórios.'
@@ -331,18 +297,14 @@ class TestBooks:
         mock_get_books.return_value = None
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/price-range?min=1000&max=2000', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 404
         assert resultado['msg'] == 'Nenhum livro encontrado na faixa de preço informada.'
         mock_get_books.assert_called_once_with(min_price=1000.0, max_price=2000.0)
 
-
-    # ========== TESTES DO ENDPOINT /top-rated ==========
     @pytest.mark.integration
     @pytest.mark.top_rated
     @patch('api.routes.books.get_top_rated_books')
@@ -371,11 +333,9 @@ class TestBooks:
         mock_get_top_rated.return_value = livros_esperados
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/top-rated', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 200
         assert isinstance(resultado, list)
@@ -390,11 +350,9 @@ class TestBooks:
         mock_get_top_rated.return_value = None
         token = self._get_mock_token()
         headers = {'Authorization': f'Bearer {token}'}
-        
         #when
         response = client.get('/api/v1/books/top-rated', headers=headers)
         resultado = response.get_json()
-        
         #then
         assert response.status_code == 404
         assert resultado['msg'] == 'Nenhum livro encontrado'
