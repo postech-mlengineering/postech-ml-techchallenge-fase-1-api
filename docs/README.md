@@ -144,6 +144,15 @@ Motor de inteligência artificial para sugestão de conteúdo.
 
 - **Health (/)**: Verifica o status da API e a conectividade com o Banco de Dados.
 
+## Monitoramento
+
+A API possui um sistema nativo de monitoramento de performance e auditoria integrada ao ciclo de vida das requisições. Todas as interações são registradas na tabela `AccessLog`, contendo: 
+
+* **Performance:** tempo de resposta de cada endpoint (response_time_ms), permitindo a identificação de gargalos operacionais e a análise de latência do sistema em tempo real
+* **Auditoria:** registro da identidade do usuário autenticado e dos metadados da conexão (endereço IP, sistema operacional e navegador). Inclui a persistência dos parâmetros de busca e do corpo das requisições, garantindo a rastreabilidade dos dados de entrada e a reprodução fiel de estados do sistema para diagnóstico de erros.
+
+Esta implementação assegura a governança dos dados e a análise do comportamento de uso da plataforma sem a dependência de serviços externos de telemetria.
+
 ### Tecnologias
 
 A aplicação atua como a camada de serviço (API) que interage com o cliente, o motor de ML e o banco de dados.
@@ -155,10 +164,18 @@ A aplicação atua como a camada de serviço (API) que interage com o cliente, o
 | **Autenticação** | **Flask-JWT-Extended** | `>=4.7.1, <5.0.0` | Extensão para implementação de segurança e controle de acesso via tokens JWT |
 | **Criptografia** | **Flask-Bcrypt** | `>=1.0.1, <2.0.0` | Extensão de segurança para hashing e verificação robusta de senhas |
 | **Performance** | **Flask-Caching** | `>=2.3.1, <3.0.0` | Extensão de otimização para implementação de camadas de cache |
+| **Migrações Flask** | **Flask-Migrate** | `>=4.1.0, <5.0.0` | Extensão que integra o Alembic ao Flask para controle de migrações |
 | **Migrações DB** | **Alembic** | `>=1.17.2, <2.0.0` | Biblioteca de versionamento utilizada para gerenciar migrações e alterações em esquema de banco de dados |
+| **Documentação** | **Flasgger** | `>=0.9.7, <0.10.0` | Ferramenta para criação de documentação interativa da API via Swagger (OpenAPI) |
+| **Driver DB** | **Psycopg2-binary** | `>=2.9.11, <3.0.0` | Adaptador de banco de dados para conexão com PostgreSQL |
 | **Análise de Dados** | **Pandas** | `>=2.3.3, <3.0.0` | Biblioteca para manipulação de dados |
+| **Web Scraping** | **BeautifulSoup4** | `>=4.14.2, <5.0.0` | Biblioteca para extração e parseamento de dados de arquivos HTML e XML |
+| **Comunicação** | **Requests** | `>=2.32.5, <3.0.0` | Biblioteca para requisições HTTP e consumo de API |
 | **NLP** | **NLTK** | `>=3.9.2, <4.0.0` | Biblioteca de processamento de linguagem natural |
 | **ML** | **Scikit-learn** | `>=1.7.2, <2.0.0` | Biblioteca para desenvolvimento de modelos de ML |
+| **Serialização** | **Joblib** | `>=1.5.2, <2.0.0` | Ferramenta para persistência de modelos de ML e execução de tarefas |
+| **Testes** | **Pytest-cov** | `>=7.0.0, <8.0.0` | Extensão para geração de relatórios de cobertura de código nos testes |
+| **Configuração** | **Python-dotenv** | `>=1.2.1, <2.0.0` | Gerenciador de variáveis de ambiente a partir de arquivos .env |
 | **Linguagem** | **Python** | `>=3.11, <3.14` | Linguagem para desenvolvimento de scripts |
 | **Infraestrutura** | **Docker** | `3.8 (Compose)` | Ferramenta de containerização para paridade entre ambientes |
 | **Gerenciamento** | **Poetry** | `2.2.1` | Gerenciador de ambientes virtuais para isolamento de dependências |
