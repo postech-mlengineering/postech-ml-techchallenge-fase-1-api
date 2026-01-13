@@ -2,7 +2,7 @@ import logging
 from api.models.__init__ import db
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 
 
 class Books(db.Model):

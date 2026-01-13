@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required
 from api.scripts.stats_utils import get_stats_overview, get_stats_by_genre
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 stats_bp = Blueprint('stats', __name__)
 
 

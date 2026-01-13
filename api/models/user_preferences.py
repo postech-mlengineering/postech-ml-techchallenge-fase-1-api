@@ -3,7 +3,7 @@ from datetime import datetime
 from api.extensions import db
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 
 
 class UserPreferences(db.Model):

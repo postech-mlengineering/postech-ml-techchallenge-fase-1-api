@@ -1,9 +1,9 @@
 import logging
-import datetime
+from datetime import datetime
 from api.extensions import db
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 
 
 class RefreshTokenManager(db.Model):
@@ -12,7 +12,7 @@ class RefreshTokenManager(db.Model):
     id                      = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username                = db.Column(db.String(80), nullable=False)
     refresh_token           = db.Column(db.Text, nullable=True)
-    created_at              = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at              = db.Column(db.DateTime, default=datetime.utcnow)
     refresh_token_expire_at = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):

@@ -1,13 +1,13 @@
 import logging
 from api.extensions import db
-from api.models.route_access_log import RouteAccessLog
+from api.models.access_log import AccessLog
 from api.models.user import User
-import time
 from flask import request, g
 from flask_jwt_extended import decode_token
+import time
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 
 
 def get_user_info():
@@ -26,7 +26,7 @@ def get_user_info():
         return None, 'Token Inválido'
 
 
-def register_route_logger(app):
+def register_access_log(app):
     @app.before_request
     def start_timer():
         g.start_time = time.time()
@@ -42,7 +42,7 @@ def register_route_logger(app):
 
         user_id, username = get_user_info()
         try:
-            log_entry = RouteAccessLog(
+            log_entry = AccessLog(
                 username=username,
                 user_id=user_id,
                 route=request.path,

@@ -12,7 +12,7 @@ from api.scripts.ml_utils import tokenizer, recommender
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 ml_bp = Blueprint('ml', __name__, url_prefix='/api/v1/ml')
 
 TFIDF_VECTORIZER_PATH = 'data/ml_artifacts/tfidf_vectorizer.pkl'

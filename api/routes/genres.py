@@ -5,7 +5,7 @@ from api.scripts.genres_utils import get_all_genres
 from flask_jwt_extended import jwt_required
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 genres_bp = Blueprint('genres', __name__)
 
 

@@ -2,7 +2,7 @@ import logging
 from flask import Flask, jsonify, g
 from sqlalchemy import inspect
 #extensões
-from api.extensions import db, jwt, swagger, bcrypt, cache
+from api.extensions import db, jwt, swagger, bcrypt, cache, migrate
 #configurações
 from api.config import Config, TestingConfig
 #blueprints
@@ -14,11 +14,27 @@ from api.routes.stats import stats_bp
 from api.routes.scrape import scrape_bp
 from api.routes.ml import ml_bp
 
-from api.logs import register_route_logger
+from api.logs import register_access_log
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 
+
+def register_jwt_handlers(jwt_manager):
+    '''Encapsula os loaders de erro do JWT'''
+    @jwt_manager.unauthorized_loader
+    def unauthorized_callback(callback):
+        return jsonify({'error': 'Token não informado ou cabeçalho ausente'}), 401
+
+    @jwt_manager.invalid_token_loader
+    def invalid_token_callback(err):
+        logger.error(f'Token inválido: {err}')
+        return jsonify({'error': 'Token inválido'}), 401
+
+    @jwt_manager.expired_token_loader
+    def expired_token_callback(header, payload):
+        return jsonify({'error': 'Token expirado'}), 401
+    
 
 def create_app(testing=False):
     logging.basicConfig(level=logging.INFO)
@@ -33,27 +49,18 @@ def create_app(testing=False):
 
     #inicializa as extensões
     db.init_app(app)
+    migrate.init_app(app, db)
     jwt.init_app(app)
     swagger.init_app(app)
     bcrypt.init_app(app)
     cache.init_app(app)
 
     #tratamento de erros do JWT
-    @jwt.unauthorized_loader
-    def unauthorized_callback(callback):
-        if 'Missing' in str(callback) or 'Authorization header' in str(callback):
-            return jsonify({'error': 'Token não informado'}), 401
-        return jsonify({'error': 'Erro de autenticação'}), 401
-
-    @jwt.invalid_token_loader
-    def invalid_token_callback(err):
-        logger.error(f'Erro de token inválido: {err}')
-        return jsonify({'error': 'Token inválido'}), 401
-
-    @jwt.expired_token_loader
-    def expired_token_callback(header, payload):
-        return jsonify({'error': 'Token expirado'}), 401
+    register_jwt_handlers(jwt)
     
+    #registro de  requisições
+    register_access_log(app)
+
     #registro de blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     app.register_blueprint(health_bp, url_prefix='/api/v1/health')
@@ -62,9 +69,6 @@ def create_app(testing=False):
     app.register_blueprint(stats_bp, url_prefix='/api/v1/stats')
     app.register_blueprint(scrape_bp, url_prefix='/api/v1/scrape')
     app.register_blueprint(ml_bp, url_prefix='/api/v1/ml')
-
-    #Registrar todaas as requisições feitas
-    register_route_logger(app)
 
     #rota raiz
     @app.route('/')

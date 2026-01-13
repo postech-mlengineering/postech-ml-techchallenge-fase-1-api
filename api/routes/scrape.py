@@ -7,7 +7,7 @@ from api.scripts.scrape_utils import run_scraping
 from flask_jwt_extended import jwt_required
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 scrape_bp = Blueprint('scrape', __name__)
 
 

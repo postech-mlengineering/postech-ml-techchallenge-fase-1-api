@@ -1,9 +1,9 @@
 import logging
-import datetime
+from datetime import datetime
 from api.extensions import db
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 
 
 class UserAccess(db.Model):
@@ -11,7 +11,7 @@ class UserAccess(db.Model):
     __tablename__ = 'user_access'
     id         = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username   = db.Column(db.String(80), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f'<Username {self.username}'

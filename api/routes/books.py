@@ -1,6 +1,6 @@
 import logging
 from api.extensions import cache
-from flask import Blueprint, jsonify, request, g
+from flask import Blueprint, jsonify, request
 from api.scripts.books_utils import (
     get_all_book_titles, 
     get_book_by_id, 
@@ -11,7 +11,7 @@ from api.scripts.books_utils import (
 from flask_jwt_extended import jwt_required
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 books_bp = Blueprint('books', __name__)
 
 
