@@ -305,7 +305,7 @@ def refresh():
         
         new_acess_token = create_access_token(identity=identity)
 
-        return jsonify({'access token': new_acess_token}), 200
+        return jsonify({'access_token': new_acess_token}), 200
     
     except Exception as e:
         logger.error(f'error: {e}')

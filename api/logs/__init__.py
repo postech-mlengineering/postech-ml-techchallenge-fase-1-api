@@ -42,7 +42,7 @@ def register_access_log(app):
 
         user_id, username = get_user_info()
         try:
-            log_entry = AccessLog(
+            log = AccessLog(
                 username=username,
                 user_id=user_id,
                 route=request.path,
@@ -58,10 +58,10 @@ def register_access_log(app):
                 response_time_ms=round(duration_ms, 2),
                 status_code=response.status_code
             )
-            db.session.add(log_entry)
+            db.session.add(log)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            logger.error(f'Erro ao salvar log de rota: {e}')
+            logger.error(f'error: {e}')
 
         return response

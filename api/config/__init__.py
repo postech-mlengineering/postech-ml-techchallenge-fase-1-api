@@ -13,9 +13,9 @@ class Config(object):
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'MEUSEGREDOAQUI')
     JWT_ALGORITHM = 'HS256'
     SWAGGER = {
-        'title': 'API Flask',
+        'title': 'BooksToScrape',
         'uiversion': 3,
-        'description': 'API Flask.'
+        'description': 'API BooksToScrape.'
     }
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)
