@@ -14,6 +14,9 @@ from api.routes.stats import stats_bp
 from api.routes.scrape import scrape_bp
 from api.routes.ml import ml_bp
 
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 from api.logs import register_access_log
 
 
@@ -70,8 +73,16 @@ def create_app(testing=False):
     app.register_blueprint(scrape_bp, url_prefix='/api/v1/scrape')
     app.register_blueprint(ml_bp, url_prefix='/api/v1/ml')
 
+    limiter = Limiter(
+        key_func=get_remote_address,
+        app=app,
+        default_limits=["60 per minute"]
+    )
+
     #rota raiz
+    
     @app.route('/')
+    #@limiter.limit('1 per minute')
     def home():
         return jsonify({
             'status': 'online',
