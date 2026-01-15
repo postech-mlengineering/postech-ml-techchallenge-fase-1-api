@@ -8,51 +8,7 @@ Como resultado, a solução consolidou a integração de rotinas de web scraping
 
 O diagrama abaixo ilustra a arquitetura do projeto na sua integridade e com suas principais funcionalidades:
 
-![Arquitetura](https://github.com/postech-mlengineering/postech-ml-engineering-fase-1-tech-challenge-api/blob/54bf2f7f3eed1e583553ffa0e20363784c4be573/docs/arquitetura.png)
-
-```mermaid
-graph LR
-    subgraph External_Source ["Fonte de Dados"]
-        Web["Books to Scrape"]
-    end
-
-    subgraph Orchestration_Layer ["Orquestração"]
-        Airflow["Apache Airflow"]
-    end
-
-    subgraph App_Layer ["API"]
-        direction TB
-        Scraper["Scraper"]
-        MLEngine["ML Engine"]
-        Auth["JWT"]
-    end
-
-    subgraph Storage_Layer ["Persistência"]
-        direction TB
-        DB[("PostgreSQL/SQLite")]
-        PKL["ML Artifacts"]
-    end
-
-    subgraph Presentation_Layer ["Aplicativo Web"]
-        Streamlit["Streamlit"]
-    end
-
-    %% Fluxos de Automação
-    Airflow --> Scraper
-    Airflow --> MLEngine
-
-    %% Fluxos de Dados
-    Scraper --> Web
-    Scraper --> DB
-    MLEngine --> DB
-    MLEngine --> PKL
-
-    %% Fluxo do Usuário
-    Streamlit --> Auth
-    Auth --> MLEngine
-    MLEngine --> PKL
-    MLEngine --> Streamlit
-```
+<br><img src="https://github.com/postech-mlengineering/postech-ml-engineering-fase-1-tech-challenge-api/blob/309eaacc3b2b66a990fa7c56d6c78acedff23788/docs/arquitetura.png?raw=true" alt="Arquitetura">
 
 ### Pré-requisitos
 
