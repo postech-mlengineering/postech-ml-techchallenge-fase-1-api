@@ -1,18 +1,23 @@
-version: '3.8'
-
 services:
   api:
     build: .
+    container_name: postech_mlengineering_api
     env_file:
-      - ${ENV_FILE_PATH:-.env}
-    container_name: postech_api
+      - .env
     restart: always
     ports:
       - "5000:5000"
     volumes:
       - .:/app
     networks:
-      - postech_network
-      
+      - postech_mlengineering_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
 networks:
-  postech_network:
+  postech_mlengineering_network:
+    external: true
