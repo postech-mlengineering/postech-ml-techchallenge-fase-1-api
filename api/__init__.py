@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, jsonify, g
+from flask import Flask, jsonify
 from sqlalchemy import inspect
 #extensões
 from api.extensions import db, jwt, swagger, bcrypt, cache, migrate
