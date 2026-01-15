@@ -8,6 +8,8 @@ Como resultado, a solução consolidou a integração de rotinas de web scraping
 
 O diagrama abaixo ilustra a arquitetura do projeto na sua integridade e com suas principais funcionalidades:
 
+![Arquitetura]()
+
 ```mermaid
 graph LR
     subgraph External_Source ["Fonte de Dados"]
