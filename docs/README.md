@@ -121,6 +121,7 @@ Esta implementação assegura a governança dos dados e a análise do comportame
 | **Criptografia** | **Flask-Bcrypt** | `>=1.0.1, <2.0.0` | Extensão de segurança para hashing e verificação robusta de senhas |
 | **Performance** | **Flask-Caching** | `>=2.3.1, <3.0.0` | Extensão de otimização para implementação de camadas de cache |
 | **Migrações Flask** | **Flask-Migrate** | `>=4.1.0, <5.0.0` | Extensão que integra o Alembic ao Flask para controle de migrações |
+| **Rate Limit** | **Flask-Limiter** | `>=4.1.1, <5.0.0` | Extensão para controle de taxa de requisições |
 | **Migrações DB** | **Alembic** | `>=1.17.2, <2.0.0` | Biblioteca de versionamento utilizada para gerenciar migrações e alterações em esquema de banco de dados |
 | **Documentação** | **Flasgger** | `>=0.9.7, <0.10.0` | Ferramenta para criação de documentação interativa da API via Swagger (OpenAPI) |
 | **Driver DB** | **Psycopg2-binary** | `>=2.9.11, <3.0.0` | Adaptador de banco de dados para conexão com PostgreSQL |
