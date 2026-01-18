@@ -35,11 +35,15 @@ O Poetry criará um ambiente virtual isolado e instalará todas as bibliotecas n
 1. Configure as variáveis de ambiente criando um arquivo .env na raiz do projeto e preencha conforme o modelo abaixo:
 
 ```bash
-JWT_SECRET_KEY=<sua_chave_secreta_aqui>
-DATABASE_URL=<sua_string_de_conexao_aqui>
+JWT_SECRET_KEY=<sua_chave_secreta>
+DATABASE_URL=<sua_string_de_conexao>
 ```
 
-Obs: você pode gerar uma chave segura para o JWT_SECRET_KEY executando openssl rand -base64 32 no seu terminal.
+Obs: é possível gerar uma chave segura para o JWT_SECRET_KEY executando:
+
+```bash 
+openssl rand -base64 32
+```
 
 2. Crie a rede externa (necessária para a comunicação entre os serviços):
 
